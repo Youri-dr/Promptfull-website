@@ -1,0 +1,563 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getAIUpdates } from "../lib/directus";
+
+export const prerender = true;
+
+// Fetch initial updates (first 10)
+const initialUpdates = await getAIUpdates(10, 0);
+
+// Logging
+console.log('📊 Fetched AI updates:', initialUpdates.length);
+console.log('📊 Updates data:', JSON.stringify(initialUpdates, null, 2));
+
+// Helper: Format date
+function formatUpdateDate(isoDate: string): string {
+  try {
+    const date = new Date(isoDate);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  } catch {
+    return '';
+  }
+}
+
+// Helper: Group by time periods
+function groupUpdatesByTime(updates: typeof initialUpdates) {
+  const now = new Date();
+  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+  const thisWeek = updates.filter(u => new Date(u.date) >= oneWeekAgo);
+  const lastWeek = updates.filter(u => {
+    const date = new Date(u.date);
+    return date < oneWeekAgo && date >= twoWeeksAgo;
+  });
+  const earlier = updates.filter(u => new Date(u.date) < twoWeeksAgo);
+
+  return { thisWeek, lastWeek, earlier };
+}
+
+const grouped = groupUpdatesByTime(initialUpdates);
+---
+
+<Layout title="Recent in AI — Promptfull">
+  <div class="recent-ai-page">
+    <!-- Header -->
+    <header class="page-header">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/" class="back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5m7 7l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>Back to Home</span>
+        </a>
+      </nav>
+
+      <h1 class="page-title">Recent in AI</h1>
+      <p class="page-subtitle">Stay updated with the latest developments in AI models and features</p>
+    </header>
+
+    <!-- Timeline -->
+    <div class="timeline-container">
+      <!-- This Week -->
+      {grouped.thisWeek.length > 0 && (
+        <section class="time-group">
+          <h2 class="time-label">This Week</h2>
+          <div class="timeline">
+            {grouped.thisWeek.map((update) => (
+              <article class="timeline-item" data-company-color={update.company.color_hex}>
+                <div class="timeline-marker">
+                  <div class="timeline-dot" style={`background: ${update.company.color_hex};`}></div>
+                  <div class="timeline-line"></div>
+                </div>
+                
+                <div class="timeline-content">
+                  <time class="update-date">{formatUpdateDate(update.date)}</time>
+                  <h3 class="update-title">{update.title}</h3>
+                  <p class="update-description">{update.description}</p>
+                  
+                  <div class="update-meta">
+                    <span class="update-company" style={`color: ${update.company.color_hex};`}>
+                      {update.company.name}
+                    </span>
+                    
+                    {update.source_url && (
+                      <a href={update.source_url} target="_blank" rel="noopener" class="update-link">
+                        View announcement →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Last Week -->
+      {grouped.lastWeek.length > 0 && (
+        <section class="time-group">
+          <h2 class="time-label">Last Week</h2>
+          <div class="timeline">
+            {grouped.lastWeek.map((update) => (
+              <article class="timeline-item" data-company-color={update.company.color_hex}>
+                <div class="timeline-marker">
+                  <div class="timeline-dot" style={`background: ${update.company.color_hex};`}></div>
+                  <div class="timeline-line"></div>
+                </div>
+                
+                <div class="timeline-content">
+                  <time class="update-date">{formatUpdateDate(update.date)}</time>
+                  <h3 class="update-title">{update.title}</h3>
+                  <p class="update-description">{update.description}</p>
+                  
+                  <div class="update-meta">
+                    <span class="update-company" style={`color: ${update.company.color_hex};`}>
+                      {update.company.name}
+                    </span>
+                    
+                    {update.source_url && (
+                      <a href={update.source_url} target="_blank" rel="noopener" class="update-link">
+                        View announcement →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Earlier -->
+      {grouped.earlier.length > 0 && (
+        <section class="time-group">
+          <h2 class="time-label">Earlier</h2>
+          <div class="timeline">
+            {grouped.earlier.map((update) => (
+              <article class="timeline-item" data-company-color={update.company.color_hex}>
+                <div class="timeline-marker">
+                  <div class="timeline-dot" style={`background: ${update.company.color_hex};`}></div>
+                  <div class="timeline-line"></div>
+                </div>
+                
+                <div class="timeline-content">
+                  <time class="update-date">{formatUpdateDate(update.date)}</time>
+                  <h3 class="update-title">{update.title}</h3>
+                  <p class="update-description">{update.description}</p>
+                  
+                  <div class="update-meta">
+                    <span class="update-company" style={`color: ${update.company.color_hex};`}>
+                      {update.company.name}
+                    </span>
+                    
+                    {update.source_url && (
+                      <a href={update.source_url} target="_blank" rel="noopener" class="update-link">
+                        View announcement →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Load More Button -->
+      <div class="load-more-wrapper">
+        <button class="load-more-button" data-offset="10">
+          <span>Load More Updates</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5m7 7l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" transform="rotate(270 12 12)"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .recent-ai-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* Header */
+  .page-header {
+    margin-bottom: 64px;
+  }
+
+  .breadcrumb {
+    margin-bottom: 32px;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent);
+    transition: opacity 0.2s ease;
+  }
+
+  .back-link:hover {
+    opacity: 0.7;
+  }
+
+  .page-title {
+    font-size: 48px;
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0 0 16px 0;
+  }
+
+  .page-subtitle {
+    font-size: 21px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Timeline */
+  .timeline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  .time-group {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .time-label {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    margin: 0;
+    padding-left: 48px;
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* Timeline Item */
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 16px;
+    position: relative;
+  }
+
+  .timeline-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9);
+    z-index: 2;
+  }
+
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    background: rgba(0, 0, 0, 0.08);
+    margin-top: 8px;
+  }
+
+  .timeline-item:last-child .timeline-line {
+    display: none;
+  }
+
+  .timeline-content {
+    padding-bottom: 8px;
+  }
+
+  .update-date {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
+  }
+
+  .update-title {
+    font-size: 21px;
+    line-height: 1.3;
+    letter-spacing: -0.016em;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 8px 0;
+  }
+
+  .update-description {
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+  }
+
+  .update-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .update-company {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .update-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    transition: opacity 0.2s ease;
+  }
+
+  .update-link:hover {
+    opacity: 0.7;
+  }
+
+  /* Load More Button */
+  .load-more-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+    padding-bottom: 64px;
+  }
+
+  .load-more-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    padding: 14px 32px;
+    border-radius: 980px;
+    
+    background: var(--accent);
+    color: white;
+    
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    
+    cursor: pointer;
+    border: none;
+    
+    box-shadow: 
+      0 2px 8px rgba(0, 122, 255, 0.2),
+      0 4px 16px rgba(0, 122, 255, 0.15);
+    
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .load-more-button:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 4px 12px rgba(0, 122, 255, 0.25),
+      0 8px 24px rgba(0, 122, 255, 0.2);
+  }
+
+  .load-more-button:active {
+    transform: translateY(0);
+  }
+
+  .load-more-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .load-more-button svg {
+    transition: transform 0.25s ease;
+  }
+
+  .load-more-button:hover svg {
+    transform: translateY(2px);
+  }
+
+  /* Loading state */
+  .load-more-button.loading {
+    pointer-events: none;
+  }
+
+  .load-more-button.loading span {
+    opacity: 0.6;
+  }
+
+  /* Mobile */
+  @media (max-width: 820px) {
+    .page-title {
+      font-size: 36px;
+    }
+
+    .page-subtitle {
+      font-size: 19px;
+    }
+
+    .timeline-container {
+      gap: 48px;
+    }
+
+    .update-title {
+      font-size: 19px;
+    }
+
+    .update-description {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .page-header {
+      margin-bottom: 48px;
+    }
+
+    .page-title {
+      font-size: 32px;
+    }
+
+    .page-subtitle {
+      font-size: 17px;
+    }
+
+    .time-label {
+      font-size: 15px;
+      padding-left: 40px;
+    }
+
+    .timeline-item {
+      grid-template-columns: 32px 1fr;
+      gap: 12px;
+    }
+
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+    }
+
+    .update-title {
+      font-size: 18px;
+    }
+
+    .update-description {
+      font-size: 15px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const loadMoreButton = document.querySelector('.load-more-button') as HTMLButtonElement;
+    if (!loadMoreButton) return;
+
+    const timeline = document.querySelector('.timeline-container');
+    if (!timeline) return;
+
+    loadMoreButton.addEventListener('click', async () => {
+      const currentOffset = parseInt(loadMoreButton.dataset.offset || '10');
+      
+      // Show loading state
+      loadMoreButton.classList.add('loading');
+      loadMoreButton.disabled = true;
+      const originalText = loadMoreButton.querySelector('span')?.textContent;
+      const span = loadMoreButton.querySelector('span');
+      if (span) span.textContent = 'Loading...';
+
+      try {
+        // Fetch more updates
+        const response = await fetch(`/api/ai-updates?offset=${currentOffset}`);
+        const data = await response.json();
+
+        if (data.updates && data.updates.length > 0) {
+          // Create HTML for new items
+          const newItemsHTML = data.updates.map((update: any) => {
+            const date = new Date(update.date).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+
+            return `
+              <article class="timeline-item" data-company-color="${update.company.color_hex}">
+                <div class="timeline-marker">
+                  <div class="timeline-dot" style="background: ${update.company.color_hex};"></div>
+                  <div class="timeline-line"></div>
+                </div>
+                
+                <div class="timeline-content">
+                  <time class="update-date">${date}</time>
+                  <h3 class="update-title">${update.title}</h3>
+                  <p class="update-description">${update.description}</p>
+                  
+                  <div class="update-meta">
+                    <span class="update-company" style="color: ${update.company.color_hex};">
+                      ${update.company.name}
+                    </span>
+                    ${update.source_url ? `
+                      <a href="${update.source_url}" target="_blank" rel="noopener" class="update-link">
+                        View announcement →
+                      </a>
+                    ` : ''}
+                  </div>
+                </div>
+              </article>
+            `;
+          }).join('');
+
+          // Find the last timeline and append
+          const lastTimeline = timeline.querySelector('.time-group:last-of-type .timeline');
+          if (lastTimeline) {
+            lastTimeline.insertAdjacentHTML('beforeend', newItemsHTML);
+          }
+
+          // Update offset
+          loadMoreButton.dataset.offset = (currentOffset + 10).toString();
+        }
+
+        // Hide button if no more updates
+        if (!data.hasMore) {
+          loadMoreButton.style.display = 'none';
+        }
+
+      } catch (error) {
+        console.error('Error loading more updates:', error);
+        if (span) span.textContent = 'Error loading updates';
+        setTimeout(() => {
+          if (span && originalText) span.textContent = originalText;
+        }, 2000);
+      } finally {
+        loadMoreButton.classList.remove('loading');
+        loadMoreButton.disabled = false;
+        if (span && originalText) span.textContent = originalText;
+      }
+    });
+  });
+</script>

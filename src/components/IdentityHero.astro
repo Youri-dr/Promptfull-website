@@ -1,0 +1,1171 @@
+---
+import { slides, tiles, themes } from './home/slideshow-config';
+---
+
+<!-- Inject slides data into window for inline script -->
+<script is:inline define:vars={{ slides, tiles, themes }}>
+  window.SLIDES_DATA = slides;
+  window.TILES_DATA = tiles;
+  window.THEMES_DATA = themes;
+</script>
+
+<div class="identity-hero">
+  <div class="identity-container">
+    
+    <!-- Story Section -->
+    <div class="story-section">
+      <p class="story-eyebrow">Why Promptfull exists</p>
+      <h1 class="story-headline">
+        AI is powerful.<br/>
+        Learning it shouldn't feel like work.
+      </h1>
+      <p class="story-paragraph">
+        Promptfull helps you create better prompts without shortcuts or tricks.
+        By understanding why prompts work,
+        better results come naturally.
+      </p>
+      <p class="story-trust">Join 1,000+ people learning AI the human way</p>
+    </div>
+
+    <!-- Approach Label -->
+    <div class="approach-label">
+      <span>Our approach</span>
+    </div>
+
+    <!-- 3 Tiles -->
+    <div class="tiles-grid">
+      {tiles.map((tile: any) => (
+        <div 
+          class="tile" 
+          data-start-slide={tile.startSlideIndex}
+          style={`background: ${themes[tile.subject].bg};`}
+        >
+          <div class="tile-content">
+            <div class="tile-icon" data-icon={tile.icon} set:html={tile.icon}>
+            </div>
+            <h3 class="tile-heading">{tile.headline}</h3>
+            <p class="tile-description">{tile.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+  <!-- END of identity-container -->
+
+  <!-- Slideshow Overlay -->
+  <div class="slideshow-overlay" id="slideshow-overlay" aria-hidden="true">
+    <div class="slideshow-backdrop"></div>
+    
+    <div class="slideshow-panel" role="dialog" aria-modal="true">
+      <!-- Close button -->
+      <button class="slideshow-close" id="slideshow-close" aria-label="Close">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <!-- Pause/Play button -->
+      <button class="slideshow-pause" id="slideshow-pause" aria-label="Pause">
+        <svg class="pause-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
+          <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+        </svg>
+        <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+          <path d="M8 5v14l11-7L8 5z" fill="currentColor"/>
+        </svg>
+      </button>
+
+      <!-- Progress Timer Bar -->
+      <div class="progress-timer">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+
+      <!-- Slides Container -->
+      <div class="slides-container" id="slides-container">
+        {slides.map((slide: any, index: number) => (
+          <div 
+            class={`slide ${index === 0 ? 'active' : ''}`}
+            data-slide-id={slide.id}
+            data-slide-type={slide.type}
+            data-subject={slide.subject}
+            data-duration={slide.duration}
+            data-has-image={slide.hasImage || false}
+            data-image-scale={slide.imageScale || 1}
+            style={`background: ${themes[slide.subject].bg};`}
+          >
+            <div class="slide-content">
+              {slide.subject === 'cta' ? (
+                <div class="slide-cta-container">
+                  <h2 class="slide-headline">{slide.headline}</h2>
+                  <a href="#" class="cta-button">
+                    <span>Download the Promptfull app on the App Store</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </a>
+                </div>
+              ) : (
+                <>
+                  {slide.type === 'text' && !slide.hasImage && (
+                    <div class="slide-text-only">
+                      {slide.headline && (
+                        <h2 
+                          class="slide-headline" 
+                          set:html={slide.headline.replace(/\*\*(.*?)\*\*/g, '<em>$1</em>')}
+                        />
+                      )}
+                      {slide.subtext && (
+                        <p 
+                          class="slide-subtext" 
+                          set:html={slide.subtext.replace(/\*\*(.*?)\*\*/g, '<em>$1</em>')}
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  {slide.type === 'text' && slide.hasImage && (
+                    <div class="slide-with-image">
+                      <div class="slide-text-column">
+                        {slide.headline && (
+                          <h2 
+                            class="slide-headline" 
+                            set:html={slide.headline.replace(/\*\*(.*?)\*\*/g, '<em>$1</em>')}
+                          />
+                        )}
+                        {slide.subtext && (
+                          <p 
+                            class="slide-subtext" 
+                            set:html={slide.subtext.replace(/\*\*(.*?)\*\*/g, '<em>$1</em>')}
+                          />
+                        )}
+                      </div>
+                      <div class="slide-image-column">
+                        <div class="image-placeholder" style={slide.imageScale ? `transform: scale(${slide.imageScale});` : ''}>
+                          {slide.imageSrc ? (
+                            <img src={slide.imageSrc} alt={slide.headline || 'Slide illustration'} />
+                          ) : (
+                            <div class="placeholder-box">
+                              <span>Mock-up placeholder</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {slide.type === 'interactive' && slide.interactive && (
+                    <div class="slide-interactive">
+                      <h2 class="slide-question">{slide.interactive.question}</h2>
+                      <div class="interactive-options">
+                        {slide.interactive.options.map((option: string) => (
+                          <button class="option-btn" data-option={option}>
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Slide Counter -->
+      <div class="slide-counter" id="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">{slides.length}</span>
+      </div>
+    </div>
+  </div>
+  <!-- END of slideshow-overlay -->
+
+</div>
+<!-- END of identity-hero -->
+
+<style>
+
+ /* Story Section */
+  .story-section {
+    max-width: 800px;
+    margin: 0 auto 80px;
+    text-align: center;
+  }
+
+  .story-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6B7280;
+    margin: 0 0 20px 0;
+  }
+
+  .story-headline {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #1F2937;
+    margin: 0 0 24px 0;
+  }
+
+  .story-paragraph {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #4B5563;
+    margin: 0 0 20px 0;
+  }
+
+  .story-paragraph em {
+    font-style: italic;
+    color: #1F2937;
+    font-weight: 600;
+  }
+
+  .story-trust {
+    font-size: 14px;
+    color: #6B7280;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  /* Approach Label */
+  .approach-label {
+    text-align: center;
+    margin: 0 0 32px 0;
+  }
+
+  .approach-label span {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6B7280;
+    padding: 8px 20px;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 20px;
+  }
+
+  /* Responsive for Story Section */
+  @media (max-width: 1024px) {
+    .story-headline {
+      font-size: 40px;
+    }
+
+    .story-paragraph {
+      font-size: 17px;
+    }
+
+    .story-section {
+      margin-bottom: 60px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .story-section {
+      margin-bottom: 48px;
+      padding: 0 8px;
+    }
+
+    .story-headline {
+      font-size: 32px;
+    }
+
+    .story-paragraph {
+      font-size: 16px;
+    }
+
+    .approach-label {
+      margin-bottom: 24px;
+    }
+  }
+  
+  /* Emphasized text - simple and bold */
+  .slide-headline em,
+  .slide-subtext em {
+    font-style: normal;
+    font-size: 1.2em;
+    font-weight: 900;
+    display: inline-block;
+  }
+
+  /* Theme colors for emphasis */
+  [data-subject="welcome"] em {
+    color: #c4b5fd;
+  }
+
+  [data-subject="friction"] em {
+    color: #22d3ee;
+  }
+
+  [data-subject="human"] em {
+    color: #fda4af;
+  }
+
+  [data-subject="inspire"] em {
+    color: #fbbf24;
+  }
+
+  [data-subject="cta"] em {
+    color: #a78bfa;
+  }
+
+  /* Container */
+  .identity-hero {
+    width: 100%;
+    padding: 10px 20px 10px !important;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .identity-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Tiles Grid */
+  .tiles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .tile {
+    border-radius: 24px;
+    padding: 40px 32px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .tile:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .tile:hover::before {
+    opacity: 1;
+  }
+
+  .tile-content {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tile-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tile-icon svg {
+    width: 48px;
+    height: 48px;
+    display: block;
+  }
+
+  .tile-heading {
+    font-size: 22px;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .tile-description {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    line-height: 1.5;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Slideshow Overlay */
+  .slideshow-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .slideshow-overlay.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .slideshow-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+  }
+
+  .slideshow-panel {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    background: white;
+    border-radius: 32px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transform: scale(0.9);
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .slideshow-overlay.active .slideshow-panel {
+    transform: scale(1);
+  }
+
+  /* Close Button */
+  .slideshow-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    width: 48px;
+    height: 48px;
+    border: none;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .slideshow-close:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: scale(1.1) rotate(90deg);
+  }
+
+  /* Pause Button */
+  .slideshow-pause {
+    position: absolute;
+    bottom: 28px;
+    left: 28px;
+    z-index: 100;
+    width: 48px;
+    height: 48px;
+    border: none;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+  }
+
+  .slideshow-pause:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
+  }
+
+  .slideshow-pause.paused .pause-icon {
+    display: none;
+  }
+
+  .slideshow-pause.paused .play-icon {
+    display: block !important;
+  }
+
+  /* Progress Timer Bar */
+  .progress-timer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 50;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: white;
+    transition: width linear;
+  }
+
+  /* Slide Counter */
+  .slide-counter {
+    position: absolute;
+    bottom: 28px;
+    right: 28px;
+    z-index: 100;
+    padding: 12px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* Slides Container */
+  .slides-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s ease;
+  }
+
+  .slide.active {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  .slide-content {
+    color: white;
+    padding: 60px 40px;
+    max-width: 900px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Text-only slides */
+  .slide-text-only {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Slides with images */
+  .slide-with-image {
+    display: grid;
+    grid-template-columns: 55% 45%;
+    gap: 48px;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+  }
+
+  .slide-text-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    position: relative;
+    z-index: 2;
+  }
+
+  .slide-image-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .image-placeholder {
+    width: 100%;
+    height: 100%;
+    max-height: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform-origin: center center;
+  }
+
+  .placeholder-box {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  /* Text Elements - BIG & BOLD */
+  .slide-headline {
+    font-size: 80px;
+    font-weight: 800;
+    margin: 0 0 32px 0;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .slide-subtext {
+    font-size: 36px;
+    font-weight: 500;
+    margin: 0;
+    opacity: 0.95;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .slide-question {
+    font-size: 56px;
+    font-weight: 800;
+    margin: 0 0 48px 0;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Interactive Options */
+  .slide-interactive {
+    width: 100%;
+    text-align: center;
+  }
+
+  .interactive-options {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .option-btn {
+    padding: 18px 36px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .option-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .option-btn:active {
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  /* CTA Slide */
+  .slide-cta-container {
+    text-align: center;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px 40px;
+    margin-top: 32px;
+    background: white;
+    color: #1d1d1f;
+    border-radius: 16px;
+    font-size: 20px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .cta-button:hover {
+    transform: scale(1.08) translateY(-4px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .tiles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .tile:last-child {
+      grid-column: 1 / -1;
+      max-width: 50%;
+      margin: 0 auto;
+    }
+
+    .slide-with-image {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+      gap: 32px;
+    }
+
+    .slide-text-column {
+      text-align: center;
+    }
+
+    .image-placeholder {
+      max-height: 320px;
+    }
+
+    .slide-headline {
+      font-size: 64px;
+    }
+
+    .slide-subtext {
+      font-size: 28px;
+    }
+
+    .slide-question {
+      font-size: 44px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .identity-hero {
+      padding: 40px 20px;
+    }
+
+    .tiles-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .tile {
+      padding: 32px 24px;
+    }
+
+    .tile:last-child {
+      max-width: 100%;
+    }
+
+    .slideshow-panel {
+      width: 96%;
+      border-radius: 20px;
+    }
+
+    .slides-container {
+      aspect-ratio: 4 / 3;
+    }
+
+    .slide-content {
+      padding: 40px 24px;
+    }
+
+    .image-placeholder {
+      max-height: 240px;
+    }
+
+    .slide-headline {
+      font-size: 48px;
+    }
+
+    .slide-subtext {
+      font-size: 22px;
+    }
+
+    .slide-question {
+      font-size: 36px;
+    }
+
+    .option-btn {
+      font-size: 16px;
+      padding: 14px 28px;
+    }
+  }
+
+  /* Accessibility */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<!-- Load anime.js from CDN -->
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+<script is:inline>
+  // Wait for anime.js to load
+  function waitForAnime(callback) {
+    if (typeof anime !== 'undefined') {
+      callback();
+    } else {
+      setTimeout(() => waitForAnime(callback), 100);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    waitForAnime(() => {
+      console.log('anime.js loaded!');
+      initSlideshow();
+    });
+  });
+
+  function initSlideshow() {
+    const slides = window.SLIDES_DATA;
+    const tileElements = document.querySelectorAll('.tile');
+    const overlay = document.getElementById('slideshow-overlay');
+    const closeBtn = document.getElementById('slideshow-close');
+    const pauseBtn = document.getElementById('slideshow-pause');
+    const slideElements = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progress-fill');
+    const currentSlideEl = document.getElementById('current-slide');
+    const totalSlidesEl = document.getElementById('total-slides');
+
+    let currentSlideIndex = 0;
+    let isPaused = false;
+    let progressAnimation = null;
+    let autoAdvanceTimeout = null;
+
+    console.log('Slideshow initialized with', slides.length, 'slides');
+
+    // ENTRANCE ANIMATION - Simple and working
+    function animateSlideEntrance(index) {
+      const slide = slideElements[index];
+      if (!slide) return;
+
+      const headline = slide.querySelector('.slide-headline');
+      const subtext = slide.querySelector('.slide-subtext');
+      const question = slide.querySelector('.slide-question');
+      const options = slide.querySelectorAll('.option-btn');
+      const ctaButton = slide.querySelector('.cta-button');
+      const imageColumn = slide.querySelector('.slide-image-column');
+
+      // Simple fade entrance for slide
+      anime.set(slide, { opacity: 0 });
+      anime({
+        targets: slide,
+        opacity: 1,
+        duration: 600,
+        easing: 'easeOutCubic'
+      });
+
+      // Animate headline
+      if (headline) {
+        anime.set(headline, { opacity: 0, translateY: 40, scale: 0.96 });
+        anime({ 
+          targets: headline, 
+          opacity: 1, 
+          translateY: 0,
+          scale: 1,
+          duration: 900, 
+          delay: 300, 
+          easing: 'easeOutCubic' 
+        });
+      }
+
+      // Animate subtext
+      if (subtext) {
+        anime.set(subtext, { opacity: 0, translateY: 30, scale: 0.97 });
+        anime({ 
+          targets: subtext, 
+          opacity: 1, 
+          translateY: 0,
+          scale: 1, 
+          duration: 800, 
+          delay: 600, 
+          easing: 'easeOutCubic' 
+        });
+      }
+
+      // Animate image column
+      if (imageColumn) {
+        anime.set(imageColumn, { opacity: 0, translateX: 60, scale: 0.95 });
+        anime({
+          targets: imageColumn,
+          opacity: 1,
+          translateX: 0,
+          scale: 1,
+          duration: 900,
+          delay: 500,
+          easing: 'easeOutCubic'
+        });
+      }
+
+      // Animate question
+      if (question) {
+        anime.set(question, { opacity: 0, scale: 0.92 });
+        anime({ 
+          targets: question, 
+          opacity: 1, 
+          scale: 1, 
+          duration: 800, 
+          delay: 400, 
+          easing: 'easeOutElastic(1, .8)' 
+        });
+      }
+
+      // Animate options
+      if (options.length > 0) {
+        anime.set(options, { opacity: 0, translateY: 30, scale: 0.95 });
+        anime({ 
+          targets: options, 
+          opacity: 1, 
+          translateY: 0,
+          scale: 1, 
+          duration: 700, 
+          delay: anime.stagger(120, { start: 800 }), 
+          easing: 'easeOutCubic' 
+        });
+      }
+
+      // Animate CTA button
+      if (ctaButton) {
+        anime.set(ctaButton, { opacity: 0, scale: 0.85 });
+        anime({
+          targets: ctaButton,
+          opacity: 1,
+          scale: 1,
+          duration: 800,
+          delay: 800,
+          easing: 'easeOutElastic(1, .6)'
+        });
+      }
+    }
+
+    // EXIT ANIMATION - Simple fade
+    function animateSlideExit(index, callback) {
+      const slide = slideElements[index];
+      if (!slide) {
+        if (callback) callback();
+        return;
+      }
+
+      anime({
+        targets: slide,
+        opacity: 0,
+        duration: 400,
+        easing: 'easeOutCubic',
+        complete: () => {
+          if (callback) callback();
+        }
+      });
+    }
+
+    function showSlide(index) {
+      console.log('Showing slide', index);
+      if (index < 0 || index >= slides.length) return;
+
+      const currentActive = document.querySelector('.slide.active');
+      const currentIndex = currentActive ? 
+        Array.from(slideElements).indexOf(currentActive) : -1;
+
+      if (currentActive && currentIndex !== index) {
+        animateSlideExit(currentIndex, () => {
+          slideElements.forEach(el => el.classList.remove('active'));
+          slideElements[index]?.classList.add('active');
+          currentSlideIndex = index;
+          if (currentSlideEl) currentSlideEl.textContent = String(index + 1);
+          animateSlideEntrance(index);
+          startProgressTimer(index);
+        });
+      } else {
+        slideElements.forEach(el => el.classList.remove('active'));
+        slideElements[index]?.classList.add('active');
+        currentSlideIndex = index;
+        if (currentSlideEl) currentSlideEl.textContent = String(index + 1);
+        animateSlideEntrance(index);
+        startProgressTimer(index);
+      }
+    }
+
+    function startProgressTimer(index) {
+      const slide = slides[index];
+      if (!slide || !progressFill) return;
+      
+      if (progressAnimation) {
+        progressAnimation.pause();
+        progressAnimation = null;
+      }
+      if (autoAdvanceTimeout) {
+        clearTimeout(autoAdvanceTimeout);
+        autoAdvanceTimeout = null;
+      }
+
+      anime.set(progressFill, { width: '0%' });
+
+      if (slide.duration === 0) {
+        anime.set(progressFill, { width: '100%' });
+        return;
+      }
+
+      progressAnimation = anime({ 
+        targets: progressFill, 
+        width: '100%', 
+        duration: slide.duration, 
+        easing: 'linear' 
+      });
+
+      autoAdvanceTimeout = setTimeout(() => { 
+        if (!isPaused) nextSlide(); 
+      }, slide.duration);
+    }
+
+    function nextSlide() {
+      const nextIndex = currentSlideIndex + 1;
+      if (nextIndex < slides.length) {
+        showSlide(nextIndex);
+      } else {
+        console.log('End of slideshow reached');
+      }
+    }
+
+    function openSlideshow(startIndex) {
+      console.log('Opening slideshow, startIndex:', startIndex);
+      if (!overlay) return;
+      
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      
+      isPaused = false;
+      showSlide(startIndex);
+    }
+
+    function closeSlideshow() {
+      if (!overlay) return;
+      
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      
+      if (progressAnimation) progressAnimation.pause();
+      if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      pauseBtn?.classList.toggle('paused', isPaused);
+      
+      if (isPaused) {
+        if (progressAnimation) progressAnimation.pause();
+        if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
+      } else {
+        if (progressAnimation) progressAnimation.play();
+        const slide = slides[currentSlideIndex];
+        if (slide && slide.duration > 0 && progressAnimation) {
+          const remaining = slide.duration * (1 - (progressAnimation.progress || 0) / 100);
+          autoAdvanceTimeout = setTimeout(() => { 
+            if (!isPaused) nextSlide(); 
+          }, remaining);
+        }
+      }
+    }
+
+    // Event listeners
+    tileElements.forEach((tile) => {
+      tile.addEventListener('click', () => {
+        const startSlide = parseInt(tile.getAttribute('data-start-slide') || '0');
+        console.log('Tile clicked, starting at slide:', startSlide);
+        openSlideshow(startSlide);
+      });
+    });
+
+    closeBtn?.addEventListener('click', closeSlideshow);
+    pauseBtn?.addEventListener('click', togglePause);
+
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target.classList.contains('option-btn')) {
+        const allOptions = document.querySelectorAll('.option-btn');
+        allOptions.forEach(btn => {
+          if (btn !== target) {
+            anime({
+              targets: btn,
+              opacity: 0.3,
+              scale: 0.95,
+              duration: 300,
+              easing: 'easeOutCubic'
+            });
+          }
+        });
+
+        anime({ 
+          targets: target, 
+          scale: [1, 1.15, 1.08], 
+          duration: 600, 
+          easing: 'easeOutElastic(1, .6)' 
+        });
+
+        setTimeout(() => { nextSlide(); }, 800);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!overlay?.classList.contains('active')) return;
+      
+      if (e.key === 'Escape') {
+        closeSlideshow();
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        togglePause();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextSlide();
+      }
+    });
+
+    if (totalSlidesEl) totalSlidesEl.textContent = String(slides.length);
+  }
+</script>

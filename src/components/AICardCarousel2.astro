@@ -1,0 +1,539 @@
+---
+// src/components/AICardCarousel2.astro (Updated with SF Symbol support)
+import { getSvgFromSFSymbol } from '../utils/sfSymbolToSvg';
+
+type AICardItem = {
+  id: string;
+  category: string;
+  categoryColorHex?: string;
+  heroSymbol?: string;
+  title: string;
+  subtitle: string;
+  likes?: number;
+};
+
+type Props = {
+  items?: AICardItem[];
+  showLockedCard?: boolean;
+  appUrl?: string;
+};
+
+const { items = [], showLockedCard = false, appUrl = "https://apps.apple.com/your-app" } = Astro.props as Props;
+
+function hexToRgb(hex?: string): { r: number; g: number; b: number } {
+  const raw = (hex ?? "#7C5CFF").replace("#", "");
+  const safe = raw.length === 6 ? raw : "7C5CFF";
+  return {
+    r: Number.parseInt(safe.slice(0, 2), 16),
+    g: Number.parseInt(safe.slice(2, 4), 16),
+    b: Number.parseInt(safe.slice(4, 6), 16),
+  };
+}
+
+function formatLikes(likes: number): string {
+  if (likes >= 10000) {
+    return `${Math.floor(likes / 1000)}k`;
+  }
+  if (likes >= 1000) {
+    const formatted = (likes / 1000).toFixed(1);
+    return formatted.endsWith('.0') ? `${Math.floor(likes / 1000)}k` : `${formatted}k`;
+  }
+  return String(likes);
+}
+
+// Helper to render SF Symbol or fallback to emoji
+function renderHeroIcon(symbolName?: string): string {
+  if (!symbolName) return '✦';
+  
+  // Check if it's an SF Symbol name (contains dots or common SF names)
+  const isSFSymbol = symbolName.includes('.') || 
+    ['sparkles', 'bolt', 'heart', 'brain', 'wand', 'lightbulb', 'star', 'book'].some(s => symbolName.toLowerCase().includes(s));
+  
+  if (isSFSymbol) {
+    const icon = getSvgFromSFSymbol(symbolName);
+    const paths = Array.isArray(icon.path) ? icon.path : [icon.path];
+    const pathElements = paths.map(p => 
+      icon.fill === 'currentColor' 
+        ? `<path d="${p}" fill="white"/>` 
+        : `<path d="${p}"/>`
+    ).join('');
+    
+    return `<svg width="48" height="48" viewBox="${icon.viewBox}" fill="${icon.fill || 'none'}" stroke="white" stroke-width="${icon.strokeWidth || 2}" stroke-linecap="round" stroke-linejoin="round">${pathElements}</svg>`;
+  }
+  
+  // Return emoji as-is
+  return symbolName;
+}
+---
+
+<section class="pf-carousel" aria-label="AI Cards">
+  <div class="pf-rail-wrap">
+    <div class="pf-rail" data-carousel-rail tabindex="0">
+      {items.map((item: AICardItem) => {
+        const { r, g, b } = hexToRgb(item.categoryColorHex);
+        const style = `--cat-r:${r};--cat-g:${g};--cat-b:${b};`;
+
+        return (
+          <article
+            class="pf-ai-card"
+            style={style}
+            data-ai-id={item.id}
+            tabindex="0"
+            role="button"
+            aria-label={`Open ${item.title}`}
+          >
+            <div class="pf-ai-top">
+              <span class="pf-pill">
+                {String(item.category || "").toUpperCase()}
+              </span>
+
+              <span class="pf-like">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+                </svg>
+                <span class="pf-like-count">{formatLikes(item.likes ?? 0)}</span>
+              </span>
+            </div>
+
+            <div class="pf-hero">
+              <div class="pf-hero-center">
+                <div class="pf-hero-icon" aria-hidden="true" set:html={renderHeroIcon(item.heroSymbol)} />
+                <div class="pf-hero-cat">{item.category}</div>
+              </div>
+            </div>
+
+            <div class="pf-ai-text">
+              <h3 class="pf-ai-title">{item.title}</h3>
+              <p class="pf-ai-sub">{item.subtitle}</p>
+            </div>
+          </article>
+        );
+      })}
+
+      {/* ✅ Locked card */}
+      {showLockedCard && (
+        <a href={appUrl} class="pf-ai-card locked-card" target="_blank" rel="noopener">
+          <div class="locked-overlay">
+            <div class="lock-content">
+              <svg class="lock-icon" width="48" height="48" viewBox="0 0 24 24" fill="none">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <h3 class="lock-title">100+ More Cards</h3>
+              <p class="lock-subtitle">Unlock the full library in the iOS app</p>
+              <span class="lock-cta">Download App →</span>
+            </div>
+          </div>
+        </a>
+      )}
+    </div>
+
+    <!-- Scroll hint overlay -->
+    <div class="pf-scroll-hint" aria-hidden="true">
+      <div class="pf-scroll-hint-content">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span>Swipe to explore</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Carousel section */
+  .pf-carousel { 
+    margin-top: 32px;
+  }
+
+  .pf-rail-wrap { 
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pf-rail {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 340px;
+    gap: 16px;
+
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 20px;
+    padding: 8px 20px 16px;
+
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  
+  .pf-rail::-webkit-scrollbar { 
+    display: none; 
+  }
+
+  /* AI Card */
+  .pf-ai-card {
+    scroll-snap-align: start;
+
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    height: 420px;
+    box-sizing: border-box;
+
+    cursor: pointer;
+    outline: none;
+    
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .pf-ai-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.06),
+      0 12px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .pf-ai-card:active {
+    transform: translateY(0);
+  }
+
+  .pf-ai-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pf-pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(var(--cat-r), var(--cat-g), var(--cat-b), 0.12);
+    color: rgb(var(--cat-r), var(--cat-g), var(--cat-b));
+    text-transform: uppercase;
+  }
+
+  .pf-like {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(60, 60, 67, 0.6);
+  }
+
+  .pf-like svg {
+    color: rgba(60, 60, 67, 0.4);
+    flex-shrink: 0;
+  }
+
+  .pf-like-count {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pf-hero {
+    height: 200px;
+    border-radius: 20px;
+    background: linear-gradient(135deg,
+      rgba(var(--cat-r), var(--cat-g), var(--cat-b), 0.9),
+      rgba(var(--cat-r), var(--cat-g), var(--cat-b), 0.6)
+    );
+    display: grid;
+    place-items: center;
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.08),
+      0 4px 16px rgba(var(--cat-r), var(--cat-g), var(--cat-b), 0.2);
+  }
+
+  .pf-hero-center {
+    text-align: center;
+    display: grid;
+    gap: 10px;
+    place-items: center;
+    padding: 10px;
+  }
+
+  .pf-hero-icon {
+    font-size: 48px;
+    color: white;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pf-hero-icon svg {
+    display: block;
+  }
+
+  .pf-hero-cat {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .pf-ai-text {
+    display: grid;
+    gap: 8px;
+  }
+
+  .pf-ai-title {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: rgba(0, 0, 0, 0.88);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .pf-ai-sub {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: rgba(60, 60, 67, 0.75);
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .pf-ai-card:focus-visible {
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.08),
+      0 0 0 4px rgba(0, 122, 255, 0.3);
+  }
+
+  /* ✅ Locked card styles */
+  .locked-card {
+    position: relative;
+    overflow: hidden;
+    text-decoration: none;
+  }
+
+  .locked-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(135deg, 
+        rgba(124, 92, 255, 0.1),
+        rgba(0, 122, 255, 0.1)
+      );
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .locked-overlay {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .lock-content {
+    text-align: center;
+    padding: 32px;
+  }
+
+  .lock-icon {
+    color: rgba(0, 0, 0, 0.3);
+    margin-bottom: 24px;
+    animation: lockFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes lockFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .lock-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: rgba(0, 0, 0, 0.88);
+    margin: 0 0 12px 0;
+  }
+
+  .lock-subtitle {
+    font-size: 17px;
+    line-height: 1.4;
+    color: rgba(60, 60, 67, 0.75);
+    margin: 0 0 24px 0;
+  }
+
+  .lock-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: rgba(0, 122, 255, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .locked-card:hover .lock-cta {
+    background: rgba(0, 122, 255, 0.15);
+    transform: translateX(2px);
+  }
+
+  /* Scroll hint overlay */
+  .pf-scroll-hint {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.18);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    z-index: 10;
+    border-radius: 12px;
+  }
+
+  .pf-scroll-hint.hidden {
+    opacity: 0;
+  }
+
+  .pf-scroll-hint-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  .pf-scroll-hint-content svg {
+    animation: slideRight 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.75; }
+  }
+
+  @keyframes slideRight {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+  }
+
+  /* Mobile */
+  @media (max-width: 520px) {
+    .pf-carousel {
+      margin-top: 28px;
+    }
+
+    .pf-rail {
+      grid-auto-columns: 82vw;
+      padding-left: 16px;
+      padding-right: 16px;
+      gap: 12px;
+    }
+    
+    .pf-ai-card { 
+      height: 400px;
+    }
+
+    .pf-ai-title {
+      font-size: 19px;
+    }
+
+    .pf-ai-sub {
+      font-size: 14px;
+    }
+
+    .lock-title {
+      font-size: 24px;
+    }
+
+    .lock-subtitle {
+      font-size: 16px;
+    }
+
+    .lock-icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>
+
+<script>
+  // Initialize carousels and scroll hints
+  document.addEventListener('DOMContentLoaded', () => {
+    const carousels = document.querySelectorAll('.pf-carousel');
+    
+    carousels.forEach((carousel) => {
+      const rail = carousel.querySelector('.pf-rail');
+      const hint = carousel.querySelector('.pf-scroll-hint');
+      
+      if (!rail || !hint) return;
+
+      const hideHint = () => {
+        hint.classList.add('hidden');
+      };
+
+      rail.addEventListener('scroll', hideHint, { once: true });
+      rail.addEventListener('touchstart', hideHint, { once: true });
+      rail.addEventListener('mousedown', hideHint, { once: true });
+
+      setTimeout(hideHint, 5000);
+    });
+
+    // Click handlers for cards
+    const cards = document.querySelectorAll('.pf-ai-card:not(.locked-card)');
+    
+    cards.forEach((card) => {
+      const htmlCard = card as HTMLElement;
+      
+      htmlCard.addEventListener('click', () => {
+        const cardId = htmlCard.getAttribute('data-ai-id');
+        
+        if (cardId) {
+          window.location.href = `/cards/${cardId}`;
+        }
+      });
+
+      htmlCard.style.cursor = 'pointer';
+    });
+  });
+</script>

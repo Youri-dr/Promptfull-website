@@ -1,0 +1,64 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleDetail from "../../components/ArticleDetail.astro";
+import { getArticles, getArticleBySlug, getRelatedArticles, getImageUrl, formatReadingTime, formatPublishDate } from "../../lib/directus";
+
+// Generate static paths for all articles
+export async function getStaticPaths() {
+  const articles = await getArticles();
+
+  console.log('📄 Building static paths for articles:', articles.length);
+  console.log('📄 Article slugs:', articles.map(a => a.slug));
+  
+  return articles.map((article) => ({
+    params: { slug: article.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+// Fetch full article content
+const fullArticle = await getArticleBySlug(slug);
+
+if (!fullArticle) {
+  return Astro.redirect('/404');
+}
+
+// Get related articles
+const relatedArticlesRaw = await getRelatedArticles(fullArticle.category, fullArticle.id, 3);
+
+// Transform article for component
+const article = {
+  id: fullArticle.slug,
+  title: fullArticle.title,
+  subtitle: fullArticle.excerpt,
+  category: fullArticle.category,
+  categoryColorHex: fullArticle.category_color || "#7C5CFF",
+  readTime: formatReadingTime(fullArticle.reading_time),
+  relativeDateLabel: "Recently", // ✅ Add this
+  publishDate: formatPublishDate(fullArticle.publish_at),
+  imageURL: fullArticle.cover_image ? getImageUrl(fullArticle.cover_image.id, { width: 1200, quality: 85 }) : null,
+  content: fullArticle.content,
+  show_prompt_box: fullArticle.show_prompt_box || false,
+  prompt_content: fullArticle.prompt_content || "",
+  prompt_why_works: fullArticle.prompt_why_works || "",
+};
+
+// Transform related articles
+const relatedArticles = relatedArticlesRaw.map(rel => ({
+  id: rel.slug,
+  title: rel.title,
+  subtitle: rel.excerpt,
+  category: rel.category,
+  categoryColorHex: rel.category_color || "#7C5CFF",
+  readTime: formatReadingTime(rel.reading_time), // ✅ Add this
+  relativeDateLabel: "Recently", // ✅ Add this
+  publishDate: formatPublishDate(rel.publish_at), // ✅ Add this
+  imageURL: rel.cover_image ? getImageUrl(rel.cover_image.id) : null, // ✅ Add this
+  content: "", // ✅ Add this (empty for related articles)
+}));
+---
+
+<Layout title={`${article.title} — Promptfull`}>
+  <ArticleDetail article={article} relatedArticles={relatedArticles} />
+</Layout>

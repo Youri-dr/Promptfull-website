@@ -1,0 +1,342 @@
+---
+// src/components/CookieConsent.astro
+---
+
+<div id="cookieConsent" class="cookie-consent hidden">
+  <div class="cookie-consent-content">
+    <div class="cookie-consent-text">
+      <h3>We value your privacy</h3>
+      <p>We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.</p>
+      <a href="/cookies" class="cookie-policy-link">Learn more about our Cookie Policy</a>
+    </div>
+    
+    <div class="cookie-consent-actions">
+      <button id="cookieReject" class="cookie-btn cookie-btn-secondary">
+        Reject Non-Essential
+      </button>
+      <button id="cookieAccept" class="cookie-btn cookie-btn-primary">
+        Accept All
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie-consent {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(29, 29, 31, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    color: white;
+    padding: 24px 20px;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .cookie-consent.hidden {
+    display: none;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .cookie-consent-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+
+  .cookie-consent-text {
+    flex: 1;
+  }
+
+  .cookie-consent-text h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: white;
+  }
+
+  .cookie-consent-text p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 8px 0;
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .cookie-policy-link {
+    font-size: 13px;
+    color: #007AFF;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .cookie-policy-link:hover {
+    color: #0051D5;
+    text-decoration: underline;
+  }
+
+  .cookie-consent-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .cookie-btn {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    white-space: nowrap;
+  }
+
+  .cookie-btn-primary {
+    background: #007AFF;
+    color: white;
+  }
+
+  .cookie-btn-primary:hover {
+    background: #0051D5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+  }
+
+  .cookie-btn-secondary {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .cookie-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+  }
+
+  /* Mobile Styles */
+  @media (max-width: 768px) {
+    .cookie-consent {
+      padding: 20px 16px;
+    }
+
+    .cookie-consent-content {
+      flex-direction: column;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .cookie-consent-text h3 {
+      font-size: 16px;
+    }
+
+    .cookie-consent-text p {
+      font-size: 13px;
+    }
+
+    .cookie-consent-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cookie-btn {
+      width: 100%;
+      padding: 14px 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .cookie-consent {
+      padding: 16px;
+    }
+
+    .cookie-consent-text h3 {
+      font-size: 15px;
+    }
+
+    .cookie-consent-text p {
+      font-size: 12px;
+    }
+  }
+</style>
+
+<script>
+  // Cookie consent functionality
+  const COOKIE_CONSENT_KEY = 'cookie_consent_status';
+  const COOKIE_CONSENT_DATE = 'cookie_consent_date';
+  const CONSENT_DURATION_DAYS = 365; // 1 year
+
+  function initCookieConsent() {
+    const consentBanner = document.getElementById('cookieConsent');
+    const acceptBtn = document.getElementById('cookieAccept');
+    const rejectBtn = document.getElementById('cookieReject');
+
+    if (!consentBanner || !acceptBtn || !rejectBtn) return;
+
+    // Check if user has already made a choice
+    const consentStatus = localStorage.getItem(COOKIE_CONSENT_KEY);
+    const consentDate = localStorage.getItem(COOKIE_CONSENT_DATE);
+
+    // Check if consent has expired (after 1 year)
+    const hasExpired = checkConsentExpired(consentDate);
+
+    if (!consentStatus || hasExpired) {
+      // Show banner if no consent or expired
+      setTimeout(() => {
+        consentBanner.classList.remove('hidden');
+      }, 1000); // Show after 1 second delay
+    } else {
+      // Apply saved consent
+      applyConsent(consentStatus);
+    }
+
+    // Accept button handler
+    acceptBtn.addEventListener('click', () => {
+      saveConsent('accepted');
+      consentBanner.classList.add('hidden');
+      applyConsent('accepted');
+    });
+
+    // Reject button handler
+    rejectBtn.addEventListener('click', () => {
+      saveConsent('rejected');
+      consentBanner.classList.add('hidden');
+      applyConsent('rejected');
+    });
+  }
+
+  function checkConsentExpired(consentDate: string | null): boolean {
+    if (!consentDate) return true;
+    
+    const savedDate = new Date(consentDate);
+    const now = new Date();
+    const daysDiff = (now.getTime() - savedDate.getTime()) / (1000 * 60 * 60 * 24);
+    
+    return daysDiff > CONSENT_DURATION_DAYS;
+  }
+
+  function saveConsent(status: string) {
+    localStorage.setItem(COOKIE_CONSENT_KEY, status);
+    localStorage.setItem(COOKIE_CONSENT_DATE, new Date().toISOString());
+    
+    // Also set a cookie for server-side detection
+    setCookie('cookie_consent', status, CONSENT_DURATION_DAYS);
+  }
+
+  function applyConsent(status: string) {
+    if (status === 'accepted') {
+      // Enable all cookies/tracking
+      enableAnalytics();
+      enableAdvertising();
+      console.log('✅ All cookies enabled');
+    } else {
+      // Only essential cookies (already enabled by default)
+      disableAnalytics();
+      disableAdvertising();
+      console.log('⚠️ Only essential cookies enabled');
+    }
+  }
+
+  function enableAnalytics() {
+    // Enable Google Analytics if gtag is available
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('consent', 'update', {
+        'analytics_storage': 'granted'
+      });
+    }
+    
+    // Load Google Analytics script if consent is granted
+    // Uncomment and add your GA4 Measurement ID
+    // loadScript('https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX');
+    
+    // Initialize gtag after script loads
+    // window.dataLayer = window.dataLayer || [];
+    // (window as any).gtag = function() { (window as any).dataLayer.push(arguments); };
+    // (window as any).gtag('js', new Date());
+    // (window as any).gtag('config', 'G-XXXXXXXXXX');
+  }
+
+  function disableAnalytics() {
+    // Disable Google Analytics if gtag is available
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('consent', 'update', {
+        'analytics_storage': 'denied'
+      });
+    }
+    
+    // Clear analytics cookies
+    deleteCookie('_ga');
+    deleteCookie('_gid');
+    deleteCookie('_gat');
+  }
+
+  function enableAdvertising() {
+    // Enable advertising cookies if gtag is available
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('consent', 'update', {
+        'ad_storage': 'granted',
+        'ad_user_data': 'granted',
+        'ad_personalization': 'granted'
+      });
+    }
+    
+    // Load advertising scripts here
+    // Example: Facebook Pixel
+    // loadScript('https://connect.facebook.net/en_US/fbevents.js');
+  }
+
+  function disableAdvertising() {
+    // Disable advertising cookies if gtag is available
+    if (typeof (window as any).gtag === 'function') {
+      (window as any).gtag('consent', 'update', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied'
+      });
+    }
+    
+    // Clear advertising cookies
+    deleteCookie('_fbp');
+    deleteCookie('_fbc');
+    deleteCookie('IDE');
+  }
+
+  function loadScript(src: string) {
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    document.head.appendChild(script);
+  }
+
+  function setCookie(name: string, value: string, days: number) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
+  }
+
+  function deleteCookie(name: string) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', initCookieConsent);
+</script>

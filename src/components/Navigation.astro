@@ -1,0 +1,347 @@
+---
+// src/components/Navigation.astro
+---
+
+<nav class="pf-nav" aria-label="Main navigation">
+  <div class="pf-nav-inner">
+    <!-- Logo/Brand -->
+    <a href="/" class="pf-nav-logo">
+      Promptfull
+    </a>
+
+    <!-- Desktop Menu -->
+    <ul class="pf-nav-menu">
+      <li><a href="/recent-in-ai">Recent in AI</a></li>
+      <li><a href="/articles">All Articles</a></li>
+      <li><a href="/app" class="pf-nav-app">App</a></li>
+      <li class="pf-nav-dropdown">
+        <button class="pf-nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+          About
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden="true">
+            <path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <ul class="pf-nav-dropdown-menu">
+          <li><a href="/about">Our Story</a></li>
+          <li><a href="/team">Team</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="pf-nav-mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span class="pf-nav-burger"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="pf-nav-mobile-menu" aria-hidden="true">
+    <ul>
+      <li><a href="/ai-updates">Recent in AI</a></li>
+      <li><a href="/articles">All Articles</a></li>
+      <li><a href="/app">App</a></li>
+      <li class="pf-nav-mobile-section">
+        <span class="pf-nav-mobile-label">About</span>
+        <ul>
+          <li><a href="/about">Our Story</a></li>
+          <li><a href="/team">Team</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<style>
+  /* Navigation Container */
+  .pf-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .pf-nav-inner {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Logo */
+  .pf-nav-logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: rgba(20, 20, 22, 0.92);
+    text-decoration: none;
+  }
+
+  /* Desktop Menu */
+  .pf-nav-menu {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .pf-nav-menu a,
+  .pf-nav-dropdown-toggle {
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(60, 60, 67, 0.85);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0;
+  }
+
+  .pf-nav-menu a:hover,
+  .pf-nav-dropdown-toggle:hover {
+    color: rgba(20, 20, 22, 0.92);
+  }
+
+  .pf-nav-app {
+    color: rgba(0, 122, 255, 1) !important;
+    font-weight: 600;
+  }
+
+  .pf-nav-app:hover {
+    color: rgba(0, 105, 224, 1) !important;
+  }
+
+  /* Dropdown - FIXED hover behavior */
+  .pf-nav-dropdown {
+    position: relative;
+  }
+
+  .pf-nav-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 160px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+  }
+
+  /* FIXED: Add padding area between button and menu to prevent gap issues */
+  .pf-nav-dropdown::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: transparent;
+  }
+
+  .pf-nav-dropdown:hover .pf-nav-dropdown-menu,
+  .pf-nav-dropdown-toggle[aria-expanded="true"] + .pf-nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .pf-nav-dropdown-menu li {
+    margin: 0;
+  }
+
+  .pf-nav-dropdown-menu a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.15s ease;
+  }
+
+  .pf-nav-dropdown-menu a:hover {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Mobile Toggle */
+  .pf-nav-mobile-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .pf-nav-burger {
+    position: relative;
+    width: 18px;
+    height: 2px;
+    background: rgba(60, 60, 67, 0.85);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .pf-nav-burger::before,
+  .pf-nav-burger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 18px;
+    height: 2px;
+    background: rgba(60, 60, 67, 0.85);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  .pf-nav-burger::before {
+    top: -6px;
+  }
+
+  .pf-nav-burger::after {
+    bottom: -6px;
+  }
+
+  .pf-nav-mobile-toggle[aria-expanded="true"] .pf-nav-burger {
+    background: transparent;
+  }
+
+  .pf-nav-mobile-toggle[aria-expanded="true"] .pf-nav-burger::before {
+    top: 0;
+    transform: rotate(45deg);
+  }
+
+  .pf-nav-mobile-toggle[aria-expanded="true"] .pf-nav-burger::after {
+    bottom: 0;
+    transform: rotate(-45deg);
+  }
+
+  /* Mobile Menu */
+  .pf-nav-mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .pf-nav-mobile-menu[aria-hidden="false"] {
+    max-height: 100vh;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .pf-nav-mobile-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 16px 20px;
+  }
+
+  .pf-nav-mobile-menu > ul > li {
+    margin: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .pf-nav-mobile-menu > ul > li:last-child {
+    border-bottom: none;
+  }
+
+  .pf-nav-mobile-menu a {
+    display: block;
+    padding: 14px 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(60, 60, 67, 0.85);
+    text-decoration: none;
+  }
+
+  .pf-nav-mobile-section {
+    padding: 14px 0;
+  }
+
+  .pf-nav-mobile-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(60, 60, 67, 0.6);
+    margin-bottom: 8px;
+  }
+
+  .pf-nav-mobile-section ul {
+    padding: 0;
+  }
+
+  .pf-nav-mobile-section ul li {
+    border: none;
+  }
+
+  .pf-nav-mobile-section a {
+    padding: 10px 0 10px 12px;
+    font-size: 15px;
+  }
+
+  /* Desktop breakpoint */
+  @media (min-width: 821px) {
+    .pf-nav-menu {
+      display: flex;
+    }
+
+    .pf-nav-mobile-toggle,
+    .pf-nav-mobile-menu {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Mobile menu toggle
+  const toggle = document.querySelector('.pf-nav-mobile-toggle');
+  const mobileMenu = document.querySelector('.pf-nav-mobile-menu');
+
+  if (toggle && mobileMenu) {
+    toggle.addEventListener('click', () => {
+      const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isExpanded));
+      mobileMenu.setAttribute('aria-hidden', String(isExpanded));
+    });
+  }
+
+  // Close mobile menu when clicking links
+  const mobileLinks = document.querySelectorAll('.pf-nav-mobile-menu a');
+  mobileLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (toggle && mobileMenu) {
+        toggle.setAttribute('aria-expanded', 'false');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+      }
+    });
+  });
+</script>

@@ -1,0 +1,131 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  url: string;
+  sponsor?: string;
+}
+
+const { 
+  title,
+  description,
+  url,
+  sponsor = "Sponsored"
+} = Astro.props;
+---
+
+<a href={url} class="sponsored-card" target="_blank" rel="noopener noreferrer sponsored">
+  <!-- Sponsored tag -->
+  <div class="sponsored-header">
+    <span class="sponsored-tag">{sponsor}</span>
+  </div>
+
+  <!-- Content -->
+  <h3 class="sponsored-title">{title}</h3>
+  <p class="sponsored-description">{description}</p>
+
+  <!-- CTA indicator -->
+  <div class="sponsored-cta">
+    <span>Learn more</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+      <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</a>
+
+<style>
+  .sponsored-card {
+    display: block;
+    padding: 20px;
+    border-radius: 20px;
+    background: rgba(120, 120, 128, 0.08);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+  }
+
+  .sponsored-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background: rgba(120, 120, 128, 0.10);
+  }
+
+  .sponsored-card:active {
+    transform: translateY(0);
+  }
+
+  .sponsored-header {
+    margin-bottom: 12px;
+  }
+
+  .sponsored-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: rgba(60, 60, 67, 0.5);
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(120, 120, 128, 0.08);
+  }
+
+  .sponsored-title {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--text);
+    margin: 0 0 8px 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .sponsored-description {
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .sponsored-cta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .sponsored-cta svg {
+    transition: transform 0.2s ease;
+  }
+
+  .sponsored-card:hover .sponsored-cta svg {
+    transform: translateX(2px);
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 520px) {
+    .sponsored-card {
+      padding: 18px;
+    }
+
+    .sponsored-title {
+      font-size: 16px;
+    }
+
+    .sponsored-description {
+      font-size: 13px;
+    }
+  }
+</style>

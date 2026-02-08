@@ -1,0 +1,61 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import CardDetailModal from "../../components/CardDetailModal.astro";
+import { getAllAICards, getAICardBySlug } from "../../lib/directus";
+
+// Generate static paths for all cards
+export async function getStaticPaths() {
+  const cards = await getAllAICards();
+  
+  return cards.map((card) => ({
+    params: { slug: card.slug }, // ✅ Use slug instead of id
+  }));
+}
+
+const { slug } = Astro.params;
+
+// Fetch full card details
+const cardData = await getAICardBySlug(slug); // ✅ Use slug
+
+if (!cardData) {
+  return Astro.redirect('/404');
+}
+
+// Parse usage_tips
+let usageTipsArray: string[] = [];
+if (cardData.usage_tips) {
+  try {
+    usageTipsArray = cardData.usage_tips
+      .split('\n')
+      .map(tip => tip.trim())
+      .filter(tip => tip.length > 0);
+  } catch {
+    usageTipsArray = [cardData.usage_tips];
+  }
+}
+
+// Transform card for component
+const card = {
+  id: cardData.slug, // ✅ Use slug as ID
+  category: cardData.category.name,
+  categoryColorHex: cardData.category.color_hex,
+  heroSymbol: cardData.hero_symbol,
+  title: cardData.title,
+  subtitle: cardData.subtitle || "",
+  likes: cardData.likes || 0,
+  fullDescription: cardData.detail_description || cardData.subtitle || "",
+  secondaryDescription: "",
+  examplePrompt: cardData.example_prompt || "",
+  usageTips: usageTipsArray,
+};
+---
+
+<Layout title={`${card.title} — Promptfull`}>
+  <CardDetailModal card={card} />
+</Layout>
+
+<style>
+  :global(body:has(.card-modal)) {
+    overflow: hidden;
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+// src/components/SFSymbol.astro
+import { renderSvgFromSFSymbol } from '../utils/sfSymbolToSvg';
+
+interface Props {
+  name: string;
+  size?: number;
+  color?: string;
+  class?: string;
+}
+
+const { 
+  name, 
+  size = 24, 
+  color = 'currentColor',
+  class: className = ''
+} = Astro.props;
+
+const svgHtml = renderSvgFromSFSymbol(name, size, color, className);
+---
+
+<Fragment set:html={svgHtml} />

@@ -1,0 +1,150 @@
+---
+interface Props {
+  appUrl?: string;
+}
+
+const { appUrl = "https://apps.apple.com/your-app" } = Astro.props;
+---
+
+<a href={appUrl} class="pf-ai-card locked-card" target="_blank" rel="noopener">
+  <div class="locked-overlay">
+    <div class="lock-content">
+      <svg class="lock-icon" width="48" height="48" viewBox="0 0 24 24" fill="none">
+        <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h3 class="lock-title">100+ More Cards</h3>
+      <p class="lock-subtitle">Unlock the full library in the iOS app</p>
+      <span class="lock-cta">Download App →</span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .locked-card {
+    scroll-snap-align: start;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.04),
+      0 8px 24px rgba(0, 0, 0, 0.08);
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+    padding: 20px;
+    height: 420px;
+    box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .locked-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.06),
+      0 12px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .locked-card:active {
+    transform: translateY(0);
+  }
+
+  /* Blurred background effect */
+  .locked-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      linear-gradient(135deg, 
+        rgba(124, 92, 255, 0.1),
+        rgba(0, 122, 255, 0.1)
+      );
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .locked-overlay {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
+
+  .lock-content {
+    text-align: center;
+    padding: 32px;
+  }
+
+  .lock-icon {
+    color: rgba(0, 0, 0, 0.3);
+    margin-bottom: 24px;
+    animation: lockFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes lockFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .lock-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: rgba(0, 0, 0, 0.88);
+    margin: 0 0 12px 0;
+  }
+
+  .lock-subtitle {
+    font-size: 17px;
+    line-height: 1.4;
+    color: rgba(60, 60, 67, 0.75);
+    margin: 0 0 24px 0;
+  }
+
+  .lock-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 12px 24px;
+    border-radius: 12px;
+    background: rgba(0, 122, 255, 0.1);
+    transition: all 0.2s ease;
+  }
+
+  .locked-card:hover .lock-cta {
+    background: rgba(0, 122, 255, 0.15);
+    transform: translateX(2px);
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 520px) {
+    .locked-card {
+      height: 400px;
+    }
+
+    .lock-title {
+      font-size: 24px;
+    }
+
+    .lock-subtitle {
+      font-size: 16px;
+    }
+
+    .lock-icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+</style>

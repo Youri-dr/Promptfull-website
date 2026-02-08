@@ -1,0 +1,52 @@
+---
+import { getArticles } from "../lib/directus";
+
+const articles = await getArticles();
+---
+
+<html>
+<head>
+  <title>Directus Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    ul { list-style: none; padding: 0; }
+    li {
+      padding: 12px;
+      margin: 8px 0;
+      background: #f5f5f7;
+      border-radius: 8px;
+    }
+    .success { color: #34c759; }
+    .error { color: #ff3b30; }
+  </style>
+</head>
+<body>
+  <h1>Directus Connection Test</h1>
+  
+  {articles.length > 0 ? (
+    <div>
+      <p class="success">✅ Connected! Found {articles.length} articles:</p>
+      <ul>
+        {articles.map((article) => (
+          <li>
+            <strong>{article.title}</strong><br/>
+            Category: {article.category}<br/>
+            Slug: {article.slug}<br/>
+            {article.cover_image && <span>Has cover image ✓</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  ) : (
+    <div>
+      <p class="error">❌ No articles found or connection failed.</p>
+      <p>Check the terminal console for errors.</p>
+    </div>
+  )}
+</body>
+</html>

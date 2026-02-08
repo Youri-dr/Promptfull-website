@@ -1,11 +1,330 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import IdentityHero from "../components/IdentityHero.astro";
+import FeaturedBanner from "../components/FeaturedBanner.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import AICardCarousel from "../components/AICardCarousel2.astro";
+import CookieConsent from "../components/CookieConsent.astro";
+import { getArticles, getAICards, getImageUrl, formatReadingTime, formatPublishDate } from "../lib/directus";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Fetch articles from Directus
+const allArticles = await getArticles();
+
+// Transform Directus articles to match component format
+const transformedArticles = allArticles.map(article => ({
+  id: article.slug,
+  title: article.title,
+  subtitle: article.excerpt,
+  category: article.category,
+  categoryColorHex: article.category_color || "#7C5CFF",
+  readTime: formatReadingTime(article.reading_time),
+  relativeDateLabel: "Recently",
+  publishDate: formatPublishDate(article.publish_at),
+  imageURL: article.cover_image ? getImageUrl(article.cover_image.id) : null,
+  is_featured: article.is_featured,
+}));
+
+// ✅ Smart featured articles logic with fallback
+const manuallyFeatured = transformedArticles.filter(article => article.is_featured);
+const nonFeatured = transformedArticles.filter(article => !article.is_featured);
+
+// If less than 5 featured, fill with most recent non-featured
+let featuredArticles = [...manuallyFeatured];
+if (featuredArticles.length < 5) {
+  const needed = 5 - featuredArticles.length;
+  const fillers = nonFeatured.slice(0, needed);
+  featuredArticles = [...featuredArticles, ...fillers];
+}
+
+// Cap at exactly 5
+featuredArticles = featuredArticles.slice(0, 5);
+
+// Desktop sections
+const bannerArticle = featuredArticles[0];
+const tileArticles = featuredArticles.slice(1, 5); // Next 4
+const allFeaturedArticles = featuredArticles; // All 5 for mobile
+
+// "New Articles" section - exclude the featured ones
+const featuredIds = new Set(featuredArticles.map(a => a.id));
+const newArticles = transformedArticles
+  .filter(article => !featuredIds.has(article.id))
+  .slice(0, 8);
+
+// ✅ Fetch AI Cards from Directus (max 5)
+const aiCardsRaw = await getAICards(5);
+
+// Transform AI cards to match component format
+const aiCards = aiCardsRaw.map(card => ({
+  id: card.slug, // ✅ Use slug instead of id
+  category: card.category.name,
+  categoryColorHex: card.category.color_hex,
+  heroSymbol: card.hero_symbol,
+  title: card.title,
+  subtitle: card.subtitle || "",
+  likes: card.likes || 0,
+}));
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Promptfull">
+  <!-- ✅ NEW: Identity Hero Sections -->
+  <IdentityHero />
+
+  <!-- ✅ ADD ID for jump button to target -->
+  <div id="articles-section">
+    
+    <!-- ✅ Featured Articles Section Header -->
+    <div class="featured-articles-section">
+      <header class="sectionHead">
+        <h2>Featured Articles</h2>
+        <p class="section-subtitle">
+          Curated insights on AI, prompting, and practical applications
+        </p>
+      </header>
+
+      <!-- Desktop: Banner + 4 tiles -->
+      <section class="featuredSection desktop-only" aria-label="Featured articles">
+        {bannerArticle && (
+          <div class="bannerWrapper">
+            <FeaturedBanner article={bannerArticle} />
+          </div>
+        )}
+        
+        <div class="tilesGrid">
+          {tileArticles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      </section>
+
+      <!-- Mobile: 5 uniform tiles -->
+      <section class="featuredSection mobile-only" aria-label="Featured articles">
+        <div class="tilesGrid">
+          {allFeaturedArticles.map((article) => (
+            <ArticleCard article={article} />
+          ))}
+        </div>
+      </section>
+    </div>
+
+    <section class="carouselSection" aria-label="AI cards carousel">
+      <AICardCarousel 
+        items={aiCards} 
+        showLockedCard={true}
+        appUrl="https://apps.apple.com/app/promptfull/idYOUR-APP-ID"
+      />
+    </section>
+
+    <section class="newArticlesSection" aria-label="New articles">
+      <header class="sectionHead">
+        <h2>New Articles</h2>
+        <p class="section-subtitle">
+          Stay updated with the latest trends and insights in AI prompting
+        </p>
+      </header>
+
+      <div class="newArticlesGrid">
+        {newArticles.map((article) => (
+          <ArticleCard article={article} />
+        ))}
+      </div>
+
+      <div class="viewAllWrapper">
+        <a href="/articles" class="viewAllButton">
+          <span>View All Articles</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+  </div>
+  
+  <!-- Cookie Consent Banner -->
+  <CookieConsent />
 </Layout>
+
+<style>
+  /* Featured Articles Section */
+  .featured-articles-section {
+    margin-top: 120px;
+  }
+
+  .section-subtitle {
+    font-size: 17px;
+    line-height: 1.5;
+    color: #6B7280;
+    margin: 20px 0 0 0;
+    max-width: 100%;
+  }
+
+  /* Layout control */
+  .desktop-only {
+    display: grid !important;
+  }
+
+  .mobile-only {
+    display: none !important;
+  }
+
+  /* Featured section */
+  .featuredSection {
+    display: grid;
+    gap: 20px;
+  }
+
+  .bannerWrapper {
+    display: block;
+  }
+
+  /* Grids */
+  .tilesGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .newArticlesGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  /* Carousel spacing */
+  .carouselSection {
+    margin-top: 56px;
+  }
+
+  /* New Articles section */
+  .newArticlesSection {
+    margin-top: 64px;
+  }
+
+  .sectionHead {
+    margin-bottom: 20px;
+  }
+
+  .sectionHead h2 {
+    margin: 0;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.88);
+  }
+
+  /* View All button - Apple style */
+  .viewAllWrapper {
+    margin-top: 36px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .viewAllButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    padding: 13px 28px;
+    border-radius: 980px;
+    
+    background: var(--accent);
+    color: white;
+    
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    
+    cursor: pointer;
+    
+    box-shadow: 
+      0 2px 8px rgba(0, 122, 255, 0.2),
+      0 4px 16px rgba(0, 122, 255, 0.15);
+    
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .viewAllButton:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 
+      0 4px 12px rgba(0, 122, 255, 0.25),
+      0 8px 24px rgba(0, 122, 255, 0.2);
+  }
+
+  .viewAllButton:active {
+    transform: translateY(0);
+  }
+
+  .viewAllButton svg {
+    transition: transform 0.25s ease;
+  }
+
+  .viewAllButton:hover svg {
+    transform: translateX(2px);
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 820px) {
+    .featured-articles-section {
+      margin-top: 80px;
+    }
+
+    .section-subtitle {
+      font-size: 16px;
+      margin-top: 16px;
+    }
+
+    .desktop-only {
+      display: none !important;
+    }
+
+    .mobile-only {
+      display: grid !important;
+    }
+
+    .tilesGrid,
+    .newArticlesGrid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .sectionHead h2 {
+      font-size: 28px;
+    }
+
+    .carouselSection {
+      margin-top: 48px;
+    }
+
+    .newArticlesSection {
+      margin-top: 52px;
+    }
+
+    .viewAllButton {
+      padding: 12px 24px;
+      font-size: 15px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .featured-articles-section {
+      margin-top: 64px;
+    }
+
+    .section-subtitle {
+      font-size: 15px;
+      margin-top: 12px;
+      padding: 0 8px;
+    }
+
+    .sectionHead h2 {
+      font-size: 24px;
+    }
+
+    .tilesGrid,
+    .newArticlesGrid {
+      gap: 14px;
+    }
+  }
+</style>

@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@directus/sdk": "^20.3.0",
+    "animejs": "^4.3.4",
     "astro": "^5.16.6"
   }
 }
