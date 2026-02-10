@@ -6,10 +6,9 @@ import { getArticles, getArticleBySlug, getRelatedArticles, getImageUrl, formatR
 // Generate static paths for all articles
 export async function getStaticPaths() {
   const articles = await getArticles();
-
   console.log('📄 Building static paths for articles:', articles.length);
   console.log('📄 Article slugs:', articles.map(a => a.slug));
-  
+
   return articles.map((article) => ({
     params: { slug: article.slug },
   }));
@@ -35,7 +34,7 @@ const article = {
   category: fullArticle.category,
   categoryColorHex: fullArticle.category_color || "#7C5CFF",
   readTime: formatReadingTime(fullArticle.reading_time),
-  relativeDateLabel: "Recently", // ✅ Add this
+  relativeDateLabel: "Recently",
   publishDate: formatPublishDate(fullArticle.publish_at),
   imageURL: fullArticle.cover_image ? getImageUrl(fullArticle.cover_image.id, { width: 1200, quality: 85 }) : null,
   content: fullArticle.content,
@@ -51,14 +50,68 @@ const relatedArticles = relatedArticlesRaw.map(rel => ({
   subtitle: rel.excerpt,
   category: rel.category,
   categoryColorHex: rel.category_color || "#7C5CFF",
-  readTime: formatReadingTime(rel.reading_time), // ✅ Add this
-  relativeDateLabel: "Recently", // ✅ Add this
-  publishDate: formatPublishDate(rel.publish_at), // ✅ Add this
-  imageURL: rel.cover_image ? getImageUrl(rel.cover_image.id) : null, // ✅ Add this
-  content: "", // ✅ Add this (empty for related articles)
+  readTime: formatReadingTime(rel.reading_time),
+  relativeDateLabel: "Recently",
+  publishDate: formatPublishDate(rel.publish_at),
+  imageURL: rel.cover_image ? getImageUrl(rel.cover_image.id) : null,
+  content: "",
 }));
 ---
 
 <Layout title={`${article.title} — Promptfull`}>
   <ArticleDetail article={article} relatedArticles={relatedArticles} />
 </Layout>
+
+<style is:global>
+  /* Override shell constraints for article pages */
+  .shell:has(.article-layout) {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 52px 0 80px !important;
+  }
+
+  /* Desktop: constrain article layout itself */
+  @media (min-width: 821px) {
+    .article-layout {
+      width: min(1200px, 92vw);
+      margin: 0 auto;
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+  }
+
+  /* Mobile: constrained content with consistent padding */
+  @media (max-width: 820px) {
+    .shell:has(.article-layout) {
+      padding: 40px 0 64px !important;
+    }
+
+    .article-layout {
+      width: 100%;
+      padding: 0 18px;
+      box-sizing: border-box;
+    }
+
+    /* Hero is full width within the layout (no extra padding) */
+    .article-hero {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    /* Other content doesn't need extra padding (inherited from layout) */
+    .breadcrumb,
+    .article-header,
+    .article-subtitle,
+    .article-content,
+    .rail-module,
+    .related-section {
+      /* Inherits 18px padding from .article-layout */
+    }
+  }
+
+  @media (max-width: 520px) {
+    .shell:has(.article-layout) {
+      padding: 32px 0 56px !important;
+    }
+  }
+</style>

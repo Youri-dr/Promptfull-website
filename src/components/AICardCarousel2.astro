@@ -1,6 +1,5 @@
 ---
-// src/components/AICardCarousel2.astro (Updated with SF Symbol support)
-import { getSvgFromSFSymbol } from '../utils/sfSymbolToSvg';
+// src/components/AICardCarousel2.astro
 
 type AICardItem = {
   id: string;
@@ -30,6 +29,15 @@ function hexToRgb(hex?: string): { r: number; g: number; b: number } {
   };
 }
 
+function heroFallback(sym?: string): string {
+  const key = (sym ?? "").toLowerCase();
+  if (key.includes("spark")) return "✦";
+  if (key.includes("bolt")) return "⚡";
+  if (key.includes("wand")) return "✨";
+  if (key.includes("brain")) return "🧠";
+  return "✦";
+}
+
 function formatLikes(likes: number): string {
   if (likes >= 10000) {
     return `${Math.floor(likes / 1000)}k`;
@@ -39,30 +47,6 @@ function formatLikes(likes: number): string {
     return formatted.endsWith('.0') ? `${Math.floor(likes / 1000)}k` : `${formatted}k`;
   }
   return String(likes);
-}
-
-// Helper to render SF Symbol or fallback to emoji
-function renderHeroIcon(symbolName?: string): string {
-  if (!symbolName) return '✦';
-  
-  // Check if it's an SF Symbol name (contains dots or common SF names)
-  const isSFSymbol = symbolName.includes('.') || 
-    ['sparkles', 'bolt', 'heart', 'brain', 'wand', 'lightbulb', 'star', 'book'].some(s => symbolName.toLowerCase().includes(s));
-  
-  if (isSFSymbol) {
-    const icon = getSvgFromSFSymbol(symbolName);
-    const paths = Array.isArray(icon.path) ? icon.path : [icon.path];
-    const pathElements = paths.map(p => 
-      icon.fill === 'currentColor' 
-        ? `<path d="${p}" fill="white"/>` 
-        : `<path d="${p}"/>`
-    ).join('');
-    
-    return `<svg width="48" height="48" viewBox="${icon.viewBox}" fill="${icon.fill || 'none'}" stroke="white" stroke-width="${icon.strokeWidth || 2}" stroke-linecap="round" stroke-linejoin="round">${pathElements}</svg>`;
-  }
-  
-  // Return emoji as-is
-  return symbolName;
 }
 ---
 
@@ -97,7 +81,7 @@ function renderHeroIcon(symbolName?: string): string {
 
             <div class="pf-hero">
               <div class="pf-hero-center">
-                <div class="pf-hero-icon" aria-hidden="true" set:html={renderHeroIcon(item.heroSymbol)} />
+                <div class="pf-hero-icon" aria-hidden="true">{heroFallback(item.heroSymbol)}</div>
                 <div class="pf-hero-cat">{item.category}</div>
               </div>
             </div>
@@ -160,8 +144,10 @@ function renderHeroIcon(symbolName?: string): string {
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    scroll-padding: 20px;
-    padding: 8px 20px 16px;
+    scroll-padding: 0;
+    padding: 8px 0 16px;
+    padding-left: calc(50% - 170px - 176px); /* Center second card: 50% - half card width - (card width + gap) */
+    padding-right: 20px;
 
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -272,13 +258,6 @@ function renderHeroIcon(symbolName?: string): string {
     color: white;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
     line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .pf-hero-icon svg {
-    display: block;
   }
 
   .pf-hero-cat {
@@ -465,9 +444,9 @@ function renderHeroIcon(symbolName?: string): string {
 
     .pf-rail {
       grid-auto-columns: 82vw;
-      padding-left: 16px;
-      padding-right: 16px;
       gap: 12px;
+      padding-left: calc(50% - 41vw - 47vw); /* Center second card on mobile */
+      padding-right: 16px;
     }
     
     .pf-ai-card { 

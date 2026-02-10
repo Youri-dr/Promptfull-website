@@ -107,6 +107,13 @@ const aiCards = aiCardsRaw.map(card => ({
     </div>
 
     <section class="carouselSection" aria-label="AI cards carousel">
+      <header class="sectionHead">
+        <h2>AI Learning Cards</h2>
+        <p class="section-subtitle">
+          Bite-sized lessons to master prompting techniques
+        </p>
+      </header>
+      
       <AICardCarousel 
         items={aiCards} 
         showLockedCard={true}
@@ -144,17 +151,17 @@ const aiCards = aiCardsRaw.map(card => ({
 </Layout>
 
 <style>
-  /* Featured Articles Section */
+  /* Section Spacing System - Consistent gaps */
   .featured-articles-section {
     margin-top: 120px;
   }
 
-  .section-subtitle {
-    font-size: 17px;
-    line-height: 1.5;
-    color: #6B7280;
-    margin: 20px 0 0 0;
-    max-width: 100%;
+  .carouselSection {
+    margin-top: 120px;
+  }
+
+  .newArticlesSection {
+    margin-top: 120px;
   }
 
   /* Layout control */
@@ -189,22 +196,12 @@ const aiCards = aiCardsRaw.map(card => ({
     gap: 20px;
   }
 
-  /* Carousel spacing */
-  .carouselSection {
-    margin-top: 56px;
-  }
-
-  /* New Articles section */
-  .newArticlesSection {
-    margin-top: 64px;
-  }
-
   .sectionHead {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
   }
 
   .sectionHead h2 {
-    margin: 0;
+    margin: 0 0 8px 0;
     font-size: 32px;
     line-height: 1.1;
     letter-spacing: -0.025em;
@@ -212,7 +209,13 @@ const aiCards = aiCardsRaw.map(card => ({
     color: rgba(0, 0, 0, 0.88);
   }
 
-  /* View All button - Apple style */
+  .section-subtitle {
+    font-size: 17px;
+    line-height: 1.5;
+    color: #6B7280;
+    margin: 0;
+    max-width: 100%;
+  }
   .viewAllWrapper {
     margin-top: 36px;
     display: flex;
@@ -270,9 +273,16 @@ const aiCards = aiCardsRaw.map(card => ({
       margin-top: 80px;
     }
 
+    .carouselSection {
+      margin-top: 80px;
+    }
+
+    .newArticlesSection {
+      margin-top: 80px;
+    }
+
     .section-subtitle {
       font-size: 16px;
-      margin-top: 16px;
     }
 
     .desktop-only {
@@ -293,14 +303,6 @@ const aiCards = aiCardsRaw.map(card => ({
       font-size: 28px;
     }
 
-    .carouselSection {
-      margin-top: 48px;
-    }
-
-    .newArticlesSection {
-      margin-top: 52px;
-    }
-
     .viewAllButton {
       padding: 12px 24px;
       font-size: 15px;
@@ -312,10 +314,16 @@ const aiCards = aiCardsRaw.map(card => ({
       margin-top: 64px;
     }
 
+    .carouselSection {
+      margin-top: 64px;
+    }
+
+    .newArticlesSection {
+      margin-top: 64px;
+    }
+
     .section-subtitle {
       font-size: 15px;
-      margin-top: 12px;
-      padding: 0 8px;
     }
 
     .sectionHead h2 {

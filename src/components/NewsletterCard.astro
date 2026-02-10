@@ -1,0 +1,281 @@
+---
+// Newsletter subscription component
+interface Props {
+  title?: string;
+  description?: string;
+  placeholder?: string;
+  buttonText?: string;
+}
+
+const { 
+  title = "Stay Updated",
+  description = "Get the latest AI prompting insights and articles delivered to your inbox.",
+  placeholder = "Enter your email",
+  buttonText = "Subscribe"
+} = Astro.props;
+---
+
+<div class="newsletter-card">
+  <div class="newsletter-content">
+    <h3 class="newsletter-title">{title}</h3>
+    <p class="newsletter-description">{description}</p>
+    
+    <form class="newsletter-form" id="newsletter-form">
+      <div class="form-group">
+        <input 
+          type="email" 
+          class="email-input" 
+          placeholder={placeholder}
+          required
+          aria-label="Email address"
+          id="newsletter-email"
+        />
+        <button type="submit" class="submit-button">
+          <span class="button-text">{buttonText}</span>
+          <svg class="button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14m-7-7l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+      <p class="form-message" id="form-message"></p>
+    </form>
+  </div>
+</div>
+
+<style>
+  .newsletter-card {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .newsletter-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .newsletter-title {
+    font-size: 24px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #1D1D1F;
+    margin: 0;
+  }
+
+  .newsletter-description {
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(29, 29, 31, 0.7);
+    margin: 0;
+  }
+
+  .newsletter-form {
+    margin-top: 4px;
+  }
+
+  .form-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .email-input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: inherit;
+    background: rgba(0, 0, 0, 0.02);
+    color: #1D1D1F;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .email-input:focus {
+    border-color: var(--accent);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+  }
+
+  .email-input::placeholder {
+    color: rgba(29, 29, 31, 0.4);
+  }
+
+  .submit-button {
+    padding: 14px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+  }
+
+  .submit-button:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 122, 255, 0.35);
+  }
+
+  .submit-button:active {
+    transform: translateY(0);
+  }
+
+  .button-icon {
+    transition: transform 0.2s ease;
+  }
+
+  .submit-button:hover .button-icon {
+    transform: translateX(2px);
+  }
+
+  .form-message {
+    margin: 12px 0 0 0;
+    font-size: 14px;
+    line-height: 1.4;
+    min-height: 20px;
+  }
+
+  .form-message.success {
+    color: #34C759;
+    font-weight: 500;
+  }
+
+  .form-message.error {
+    color: #FF3B30;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 520px) {
+    .newsletter-card {
+      padding: 28px 24px;
+    }
+
+    .newsletter-title {
+      font-size: 22px;
+    }
+
+    .newsletter-description {
+      font-size: 15px;
+    }
+
+    .form-group {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .email-input,
+    .submit-button {
+      width: 100%;
+    }
+
+    .submit-button {
+      justify-content: center;
+    }
+  }
+
+  /* Loading state */
+  .submit-button.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .submit-button.loading .button-text::after {
+    content: '...';
+    animation: ellipsis 1.5s infinite;
+  }
+
+  @keyframes ellipsis {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('newsletter-form') as HTMLFormElement;
+    const emailInput = document.getElementById('newsletter-email') as HTMLInputElement;
+    const submitButton = form?.querySelector('.submit-button') as HTMLButtonElement;
+    const message = document.getElementById('form-message') as HTMLParagraphElement;
+
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = emailInput.value.trim();
+      
+      if (!email) {
+        showMessage('Please enter your email address.', 'error');
+        return;
+      }
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showMessage('Please enter a valid email address.', 'error');
+        return;
+      }
+
+      // Show loading state
+      submitButton.classList.add('loading');
+      message.textContent = '';
+
+      try {
+        // TODO: Replace with your actual newsletter API endpoint
+        // For now, simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Simulated success
+        showMessage('✓ Thanks for subscribing! Check your inbox.', 'success');
+        emailInput.value = '';
+        
+        // TODO: Actual implementation would be:
+        /*
+        const response = await fetch('/api/newsletter/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          showMessage('✓ Thanks for subscribing! Check your inbox.', 'success');
+          emailInput.value = '';
+        } else {
+          showMessage(data.message || 'Something went wrong. Please try again.', 'error');
+        }
+        */
+      } catch (error) {
+        showMessage('Something went wrong. Please try again.', 'error');
+      } finally {
+        submitButton.classList.remove('loading');
+      }
+    });
+
+    function showMessage(text: string, type: 'success' | 'error') {
+      message.textContent = text;
+      message.className = `form-message ${type}`;
+      
+      if (type === 'success') {
+        setTimeout(() => {
+          message.textContent = '';
+          message.className = 'form-message';
+        }, 5000);
+      }
+    }
+  });
+</script>

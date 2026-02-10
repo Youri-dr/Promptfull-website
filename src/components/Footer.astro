@@ -1,8 +1,17 @@
 ---
 // src/components/Footer.astro
+import NewsletterCard from "./NewsletterCard.astro";
 ---
 
 <footer class="page-footer">
+  <!-- Newsletter Section - at the top -->
+  <div class="footer-newsletter">
+    <NewsletterCard 
+      title="Stay in the Loop"
+      description="Get weekly insights on AI prompting, new articles, and product updates."
+    />
+  </div>
+
   <div class="footer-content">
     <div class="footer-brand">
       <strong>Promptfull</strong>
@@ -53,6 +62,12 @@
     margin-top: 80px;
   }
   
+  /* Newsletter Section - at the top */
+  .footer-newsletter {
+    max-width: 1060px;
+    margin: 0 auto 60px;
+  }
+
   .footer-content {
     max-width: 1060px;
     margin: 0 auto;
@@ -126,6 +141,10 @@
   @media (max-width: 768px) {
     .page-footer {
       padding: 48px 20px 24px;
+    }
+
+    .footer-newsletter {
+      margin-bottom: 48px;
     }
     
     .footer-content {
