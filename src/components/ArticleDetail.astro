@@ -43,6 +43,7 @@ import PromptCopyCard from "./PromptCopyCard.astro";
 import AppPromoCard from "./AppPromoCard.astro";
 import SponsoredInsightCard from "./SponsoredInsightCard.astro";
 import RecentInAI from "./RecentInAI.astro";
+import ShareButton from "./ShareButton.astro";
 ---
 
 <div class="article-layout">
@@ -96,6 +97,13 @@ import RecentInAI from "./RecentInAI.astro";
 
     <!-- Article content -->
     <div class="article-content" set:html={article.content} />
+
+    <!-- Share button -->
+    <ShareButton 
+      title={article.title}
+      url={`https://promptfull-ai.com/articles/${article.id}`}
+      text={article.subtitle}
+    />
 
     <!-- Related articles -->
     {relatedArticles.length > 0 && (
@@ -455,33 +463,38 @@ import RecentInAI from "./RecentInAI.astro";
     .article-subtitle { order: 4; }
     .article-content { order: 5; }
     
-    /* Prompt card right after content - "key takeaway" */
+    /* Share button - encourage sharing right after reading */
+    .share-section {order: 6;
+      margin: 40px 0 0 0;
+    }
+    
+    /* Prompt card right after share - "key takeaway" */
     .rail-prompt { 
-      order: 6; 
+      order: 7; 
       margin: 40px 0 32px 0;
     }
     
     /* Related articles - keep them engaged */
     .related-section { 
-      order: 7;
-      margin-top: 32px;
+      order: 8;
+      margin-top: 0px;
     }
     
     /* App promo - convert engaged readers */
     .rail-app { 
-      order: 8; 
+      order: 9; 
       margin: 40px 0 24px 0;
     }
     
     /* Sponsored - higher visibility, better performance */
     .rail-sponsored { 
-      order: 9; 
+      order: 10; 
       margin: 24px 0;
     }
     
     /* Recent in AI - bonus content at the end */
     .rail-recent { 
-      order: 10; 
+      order: 11; 
       margin: 24px 0;
     }
 
