@@ -160,6 +160,13 @@ export const tiles: TileConfig[] = [
     headline: 'Human-centered',
     description: 'Practice at your own pace',
     startSlideIndex: 6
+  },
+  {
+    subject: 'structured',
+    icon: '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="16" height="16" rx="3" fill="white" opacity="0.9"/><rect x="26" y="6" width="16" height="16" rx="3" fill="white" opacity="0.9"/><rect x="6" y="26" width="16" height="16" rx="3" fill="white" opacity="0.9"/><rect x="26" y="26" width="16" height="16" rx="3" fill="white" opacity="0.9"/></svg>',
+    headline: 'Structured thinking',
+    description: 'One insight per card',
+    startSlideIndex: 0
   }
 ];
 
@@ -204,7 +211,11 @@ export const themes: Record<string, { bg: string; symbol: string }> = {
   welcome: { bg: themesData[0].themeColor, symbol: themesData[0].themeSymbol },
   friction: { bg: themesData[1].themeColor, symbol: themesData[1].themeSymbol },
   human: { bg: themesData[2].themeColor, symbol: themesData[2].themeSymbol },
-  cta: { bg: '#8b5cf6', symbol: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>' }
+  cta: { bg: '#8b5cf6', symbol: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>' },
+  structured: { 
+    bg: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+    symbol: '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="16" height="16" rx="3" fill="white" opacity="0.9"/><rect x="26" y="6" width="16" height="16" rx="3" fill="white" opacity="0.9"/><rect x="6" y="26" width="16" height="16" rx="3" fill="white" opacity="0.9"/><rect x="26" y="26" width="16" height="16" rx="3" fill="white" opacity="0.9"/></svg>'
+  }
 };
 
 // Export alias for compatibility
