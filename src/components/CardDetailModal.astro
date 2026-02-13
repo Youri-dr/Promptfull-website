@@ -289,6 +289,7 @@ const formattedLikes = formatLikes(card.likes);
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
+    padding-right: 48px; /* ✅ FIXED: Add padding to avoid close button overlap */
   }
 
   .category-pill {
@@ -380,7 +381,7 @@ const formattedLikes = formatLikes(card.likes);
     position: relative;
     padding: 20px;
     border-radius: 20px;
-    background: #1e1e1e; /* ✅ Dark terminal background */
+    background: #1e1e1e;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
@@ -396,7 +397,7 @@ const formattedLikes = formatLikes(card.likes);
     font-size: 15px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: rgba(255, 255, 255, 0.9); /* ✅ Light text on dark bg */
+    color: rgba(255, 255, 255, 0.9);
     margin: 0;
   }
 
@@ -427,13 +428,12 @@ const formattedLikes = formatLikes(card.likes);
     position: relative;
   }
 
-  /* ✅ Terminal-style prompt text */
   .prompt-text {
     font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
-    font-size: 15px; /* ✅ Slightly larger */
-    line-height: 1.6; /* ✅ More breathing room */
-    color: #d4d4d4; /* ✅ Terminal text color (VS Code default) */
-    background: rgba(0, 0, 0, 0.2); /* ✅ Slightly darker area for prompt */
+    font-size: 15px;
+    line-height: 1.6;
+    color: #d4d4d4;
+    background: rgba(0, 0, 0, 0.2);
     margin: 0;
     white-space: pre-wrap;
     word-break: break-word;
@@ -496,7 +496,7 @@ const formattedLikes = formatLikes(card.likes);
     pointer-events: none;
     opacity: 0;
     z-index: 10;
-    background: rgba(30, 30, 30, 0.95); /* ✅ Dark overlay */
+    background: rgba(30, 30, 30, 0.95);
   }
 
   .copied-overlay.show {
@@ -668,6 +668,10 @@ const formattedLikes = formatLikes(card.likes);
       right: 16px;
     }
 
+    .header-top {
+      padding-right: 44px; /* Adjust for mobile close button position */
+    }
+
     .card-title {
       font-size: 28px;
     }
@@ -731,8 +735,28 @@ const formattedLikes = formatLikes(card.likes);
     const toast = modal.querySelector('.toast');
     const toastText = toast?.querySelector('.toast-text');
 
+    // ✅ FIXED: Lock scroll when modal opens
+    const scrollY = window.scrollY;
+
+    // Lock scroll
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+
     // Close modal
     const closeModal = () => {
+      // ✅ FIXED: Restore scroll position
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      window.scrollTo(0, scrollY);
+
       window.history.back();
     };
 
