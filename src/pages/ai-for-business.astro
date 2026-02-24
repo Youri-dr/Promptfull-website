@@ -96,7 +96,7 @@ try {
         <span class="eyebrow-meta">20 min read</span>
       </div>
       <h1 class="pillar-title">
-        AI for Business: The Complete Guide for&nbsp;Entrepreneurs&nbsp;&amp;&nbsp;Creators
+        AI for Business:<br>The Complete Guide for Entrepreneurs &amp; Creators
       </h1>
       <p class="pillar-intro">
         Artificial intelligence is no longer experimental. It writes sales pages, generates ad creatives, summarises research, and automates entire workflows. But most entrepreneurs who try it walk away underwhelmed. This guide explains why that happens, and what to do about it.
@@ -325,6 +325,7 @@ try {
     max-width: 900px;
     margin: 0 auto;
     padding: 60px 40px 100px;
+    box-sizing: border-box;
   }
 
   /* Hero */
@@ -333,7 +334,7 @@ try {
   .eyebrow-pill    { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); background: var(--blue-soft); padding: 4px 10px; border-radius: 20px; }
   .eyebrow-divider,
   .eyebrow-meta    { font-size: 13px; color: var(--ink-faint); }
-  .pillar-title    { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; color: var(--ink); margin: 0 0 24px; }
+  .pillar-title    { font-size: clamp(28px, 5vw, 48px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; color: var(--ink); margin: 0 0 24px; }
   .pillar-intro    { font-size: 19px; line-height: 1.65; color: var(--ink-soft); margin: 0 0 20px; }
   .hero-meta       { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-faint); }
   .meta-dot        { opacity: 0.5; }
@@ -394,9 +395,15 @@ try {
 
   /* Mobile */
   @media (max-width: 640px) {
-    .pillar               { padding: 40px 20px 80px; }
+    .pillar               { padding: 32px 20px 80px; box-sizing: border-box; width: 100%; max-width: 100%; overflow-x: hidden; }
+    .pillar-title         { font-size: 26px; word-break: normal; overflow-wrap: normal; hyphens: none; }
+    .pillar-intro         { font-size: 17px; }
+    .toc                  { padding: 20px; }
     .prompt-compare       { grid-template-columns: 1fr; }
     .misconceptions-grid  { grid-template-columns: 1fr; }
     .articles-grid        { grid-template-columns: 1fr; }
+    .pillar-body h2       { font-size: 22px; }
+    .pillar-body h3       { font-size: 17px; }
+    .pillar-body p        { font-size: 16px; }
   }
 </style>
