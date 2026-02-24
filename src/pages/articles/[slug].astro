@@ -90,10 +90,14 @@ const relatedArticles = relatedArticlesRaw.map(rel => ({
       box-sizing: border-box;
       max-width: 100%;
     }
-    .article-main,
-    .article-rail {
+    /* article-main only — do NOT set width on article-rail here,
+       that would override display:none and pull it back into flow */
+    .article-main {
       width: 100%;
       max-width: 100%;
+    }
+    .article-rail {
+      display: none !important;
     }
     .article-hero {
       margin-left: 0;
