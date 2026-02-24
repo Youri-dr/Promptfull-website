@@ -1,0 +1,264 @@
+---
+// src/components/ArticleFAQ.astro
+// Pure UI component — receives FAQ items, renders accordion + JSON-LD.
+// No content logic lives here.
+
+import type { FaqItem } from '../data/faqConfig';
+
+interface Props {
+  faqs: FaqItem[];
+}
+
+const { faqs } = Astro.props;
+
+// Build JSON-LD structured data
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": faqs.map((faq) => ({
+    "@type": "Question",
+    "name": faq.question,
+    "acceptedAnswer": {
+      "@type": "Answer",
+      // Strip HTML tags for structured data
+      "text": faq.answer.replace(/<[^>]*>/g, ""),
+    },
+  })),
+};
+---
+
+<!-- FAQ Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+<section class="article-faq" aria-labelledby="faq-heading">
+  <h2 class="faq-heading" id="faq-heading">Frequently Asked Questions</h2>
+
+  <dl class="faq-list">
+    {faqs.map((faq, index) => (
+      <div class="faq-item">
+        <dt class="faq-question">
+          <button
+            class="faq-trigger"
+            aria-expanded="false"
+            aria-controls={`faq-answer-${index}`}
+            id={`faq-question-${index}`}
+          >
+            <span class="faq-question-text">{faq.question}</span>
+            <span class="faq-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M3 6l5 5 5-5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+        </dt>
+        <dd
+          class="faq-answer"
+          id={`faq-answer-${index}`}
+          role="region"
+          aria-labelledby={`faq-question-${index}`}
+          hidden
+        >
+          <div class="faq-answer-inner" set:html={faq.answer} />
+        </dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<style>
+  .article-faq {
+    margin-top: 72px;
+    padding-top: 48px;
+    border-top: 1px solid rgba(60, 60, 67, 0.1);
+  }
+
+  .faq-heading {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.016em;
+    color: var(--text, #1D1D1F);
+    margin: 0 0 28px 0;
+  }
+
+  /* List reset */
+  .faq-list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Each item */
+  .faq-item {
+    border-top: 1px solid rgba(60, 60, 67, 0.08);
+  }
+
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Question trigger */
+  .faq-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .faq-question-text {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: var(--text, #1D1D1F);
+    transition: color 0.15s ease;
+  }
+
+  .faq-trigger:hover .faq-question-text {
+    color: var(--accent, #007AFF);
+  }
+
+  /* Chevron icon */
+  .faq-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(60, 60, 67, 0.4);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), color 0.15s ease;
+    border-radius: 50%;
+  }
+
+  .faq-trigger:hover .faq-icon {
+    color: var(--accent, #007AFF);
+  }
+
+  /* Rotated state */
+  .faq-trigger[aria-expanded="true"] .faq-icon {
+    transform: rotate(180deg);
+    color: var(--accent, #007AFF);
+  }
+
+  .faq-trigger[aria-expanded="true"] .faq-question-text {
+    color: var(--text, #1D1D1F);
+  }
+
+  /* Answer panel */
+  .faq-answer {
+    overflow: hidden;
+  }
+
+  .faq-answer[hidden] {
+    display: block; /* Override browser hidden so animation works */
+    max-height: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease;
+  }
+
+  .faq-answer.is-open {
+    max-height: 600px;
+    opacity: 1;
+    pointer-events: auto;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease 0.05s;
+  }
+
+  .faq-answer-inner {
+    padding: 0 0 20px 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary, rgba(60, 60, 67, 0.75));
+  }
+
+  /* Inline links (pillar reference, etc.) */
+  .faq-answer-inner :global(a) {
+    color: var(--accent, #007AFF);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 122, 255, 0.25);
+    transition: border-color 0.15s ease;
+  }
+
+  .faq-answer-inner :global(a:hover) {
+    border-bottom-color: var(--accent, #007AFF);
+  }
+
+  /* Mobile */
+  @media (max-width: 520px) {
+    .article-faq {
+      margin-top: 48px;
+      padding-top: 32px;
+    }
+
+    .faq-heading {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .faq-trigger {
+      padding: 16px 0;
+    }
+
+    .faq-question-text {
+      font-size: 15px;
+    }
+
+    .faq-answer-inner {
+      font-size: 14px;
+    }
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .faq-answer[hidden],
+    .faq-answer.is-open {
+      transition: none;
+    }
+
+    .faq-icon {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // Minimal vanilla JS — no dependencies.
+  // Uses max-height animation via CSS class toggle.
+  document.querySelectorAll<HTMLButtonElement>('.faq-trigger').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      const answerId = trigger.getAttribute('aria-controls')!;
+      const answer = document.getElementById(answerId)!;
+
+      // Close all others first
+      document.querySelectorAll<HTMLButtonElement>('.faq-trigger').forEach((t) => {
+        if (t !== trigger) {
+          t.setAttribute('aria-expanded', 'false');
+          const id = t.getAttribute('aria-controls')!;
+          const a = document.getElementById(id)!;
+          a.classList.remove('is-open');
+        }
+      });
+
+      // Toggle current
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+      answer.classList.toggle('is-open', !isOpen);
+    });
+  });
+</script>

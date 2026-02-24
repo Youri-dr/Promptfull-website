@@ -2,11 +2,10 @@
 // src/components/Footer.astro
 import NewsletterCard from "./NewsletterCard.astro";
 ---
-
 <footer class="page-footer">
-  <!-- Newsletter Section - at the top -->
+  <!-- Newsletter Section -->
   <div class="footer-newsletter">
-    <NewsletterCard 
+    <NewsletterCard
       title="Stay in the Loop"
       description="Get weekly insights on AI prompting, new articles, and product updates."
     />
@@ -17,7 +16,7 @@ import NewsletterCard from "./NewsletterCard.astro";
       <strong>Promptfull</strong>
       <p>Master AI prompting, naturally.</p>
     </div>
-    
+
     <div class="footer-links">
       <div class="footer-column">
         <h4>Product</h4>
@@ -27,16 +26,17 @@ import NewsletterCard from "./NewsletterCard.astro";
           <li><a href="/ai-updates">AI Updates</a></li>
         </ul>
       </div>
-      
+
       <div class="footer-column">
-        <h4>Company</h4>
+        <h4>Learn</h4>
         <ul>
+          <li><a href="/ai-for-business">AI for Business</a></li>
           <li><a href="/about">Our Story</a></li>
           <li><a href="/team">Team</a></li>
           <li><a href="/contact">Contact</a></li>
         </ul>
       </div>
-      
+
       <div class="footer-column">
         <h4>Legal</h4>
         <ul>
@@ -47,7 +47,15 @@ import NewsletterCard from "./NewsletterCard.astro";
       </div>
     </div>
   </div>
-  
+
+  <!-- SEO pillar callout strip -->
+  <div class="footer-pillar-strip">
+    <div class="footer-pillar-inner">
+      <p>New to AI for business? Start here.</p>
+      <a href="/ai-for-business">Read the complete guide →</a>
+    </div>
+  </div>
+
   <div class="footer-bottom">
     <p>&copy; {new Date().getFullYear()} Promptfull. All rights reserved.</p>
   </div>
@@ -61,8 +69,8 @@ import NewsletterCard from "./NewsletterCard.astro";
     padding: 60px 20px 32px;
     margin-top: 80px;
   }
-  
-  /* Newsletter Section - at the top */
+
+  /* Newsletter */
   .footer-newsletter {
     max-width: 1060px;
     margin: 0 auto 60px;
@@ -76,25 +84,26 @@ import NewsletterCard from "./NewsletterCard.astro";
     gap: 60px;
     margin-bottom: 48px;
   }
-  
+
   .footer-brand strong {
     font-size: 20px;
     font-weight: 700;
     display: block;
     margin-bottom: 8px;
+    color: #fff;
   }
-  
+
   .footer-brand p {
     font-size: 14px;
     color: rgba(255, 255, 255, 0.6);
   }
-  
+
   .footer-links {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 40px;
   }
-  
+
   .footer-column h4 {
     font-size: 13px;
     font-weight: 600;
@@ -103,13 +112,13 @@ import NewsletterCard from "./NewsletterCard.astro";
     color: rgba(255, 255, 255, 0.5);
     margin-bottom: 12px;
   }
-  
+
   .footer-column ul {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
+
   .footer-column a {
     display: block;
     font-size: 14px;
@@ -118,11 +127,44 @@ import NewsletterCard from "./NewsletterCard.astro";
     padding: 6px 0;
     transition: color 0.2s ease;
   }
-  
-  .footer-column a:hover {
-    color: rgba(255, 255, 255, 1);
+
+  .footer-column a:hover { color: #fff; }
+
+  /* SEO pillar strip */
+  .footer-pillar-strip {
+    max-width: 1060px;
+    margin: 0 auto 40px;
+    background: rgba(0, 122, 255, 0.12);
+    border: 1px solid rgba(0, 122, 255, 0.25);
+    border-radius: 12px;
+    padding: 16px 24px;
   }
-  
+
+  .footer-pillar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .footer-pillar-inner p {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .footer-pillar-inner a {
+    font-size: 14px;
+    font-weight: 600;
+    color: #007AFF;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+
+  .footer-pillar-inner a:hover { opacity: 0.75; }
+
+  /* Bottom bar */
   .footer-bottom {
     max-width: 1060px;
     margin: 0 auto;
@@ -130,32 +172,23 @@ import NewsletterCard from "./NewsletterCard.astro";
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     text-align: center;
   }
-  
+
   .footer-bottom p {
     font-size: 13px;
     color: rgba(255, 255, 255, 0.5);
     margin: 0;
   }
-  
-  /* Mobile Footer */
-  @media (max-width: 768px) {
-    .page-footer {
-      padding: 48px 20px 24px;
-    }
 
-    .footer-newsletter {
-      margin-bottom: 48px;
-    }
-    
+  /* Mobile */
+  @media (max-width: 768px) {
+    .page-footer    { padding: 48px 20px 24px; }
+    .footer-newsletter { margin-bottom: 48px; }
     .footer-content {
       grid-template-columns: 1fr;
       gap: 40px;
       margin-bottom: 32px;
     }
-    
-    .footer-links {
-      grid-template-columns: 1fr;
-      gap: 32px;
-    }
+    .footer-links   { grid-template-columns: 1fr; gap: 32px; }
+    .footer-pillar-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
   }
 </style>

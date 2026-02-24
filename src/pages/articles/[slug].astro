@@ -8,7 +8,6 @@ export async function getStaticPaths() {
   const articles = await getArticles();
   console.log('📄 Building static paths for articles:', articles.length);
   console.log('📄 Article slugs:', articles.map(a => a.slug));
-
   return articles.map((article) => ({
     params: { slug: article.slug },
   }));
@@ -18,7 +17,6 @@ const { slug } = Astro.params;
 
 // Fetch full article content
 const fullArticle = await getArticleBySlug(slug);
-
 if (!fullArticle) {
   return Astro.redirect('/404');
 }
@@ -54,10 +52,11 @@ const relatedArticles = relatedArticlesRaw.map(rel => ({
   relativeDateLabel: "Recently",
   publishDate: formatPublishDate(rel.publish_at),
   imageURL: rel.cover_image ? getImageUrl(rel.cover_image.id) : null,
+  // ← cover_image passed as UUID so ArticleDetail can build the asset URL
+  cover_image: rel.cover_image?.id ?? null,
   content: "",
 }));
 ---
-
 <Layout title={`${article.title} — Promptfull`}>
   <ArticleDetail article={article} relatedArticles={relatedArticles} />
 </Layout>
@@ -85,22 +84,17 @@ const relatedArticles = relatedArticlesRaw.map(rel => ({
     .shell:has(.article-layout) {
       padding: 32px 12px 48px 12px !important;
     }
-
     .article-layout {
       width: 100%;
       padding: 0;
       box-sizing: border-box;
       max-width: 100%;
     }
-
-    /* Ensure containers don't overflow */
     .article-main,
     .article-rail {
       width: 100%;
       max-width: 100%;
     }
-
-    /* Hero is full width within the layout */
     .article-hero {
       margin-left: 0;
       margin-right: 0;

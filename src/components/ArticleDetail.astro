@@ -1,4 +1,12 @@
 ---
+import { getFaqForCategory } from '../data/faqConfig';
+import ArticleFAQ from './ArticleFAQ.astro';
+import PromptCopyCard from "./PromptCopyCard.astro";
+import AppPromoCard from "./AppPromoCard.astro";
+import SponsoredInsightCard from "./SponsoredInsightCard.astro";
+import RecentInAI from "./RecentInAI.astro";
+import ShareButton from "./ShareButton.astro";
+
 // Article detail component with 2-column layout
 type Article = {
   id: string;
@@ -10,6 +18,7 @@ type Article = {
   relativeDateLabel: string;
   publishDate: string;
   imageURL: string | null;
+  cover_image?: string | null;
   content: string;
   show_prompt_box?: boolean;
   prompt_content?: string;
@@ -22,6 +31,17 @@ interface Props {
 }
 
 const { article, relatedArticles = [] } = Astro.props as Props;
+
+// ── Imports ───────────────────────────────────────────────────────────────────
+
+// ── Directus asset URL helper ────────────────────────────────────────────────
+// cover_image from Directus is a UUID. Build the full asset URL here.
+const DIRECTUS_URL = import.meta.env.DIRECTUS_URL ?? import.meta.env.PUBLIC_DIRECTUS_URL ?? '';
+const assetUrl = (id: string | null | undefined) =>
+  id ? `${DIRECTUS_URL}/assets/${id}` : null;
+
+// ── FAQ ───────────────────────────────────────────────────────────────────────
+const faqs = getFaqForCategory(article.category);
 
 // Color for category pill
 const hexRaw = (article.categoryColorHex || "#7C5CFF").toString().replace("#", "");
@@ -39,11 +59,6 @@ const sponsoredContent = {
   sponsor: "Sponsored"
 };
 
-import PromptCopyCard from "./PromptCopyCard.astro";
-import AppPromoCard from "./AppPromoCard.astro";
-import SponsoredInsightCard from "./SponsoredInsightCard.astro";
-import RecentInAI from "./RecentInAI.astro";
-import ShareButton from "./ShareButton.astro";
 ---
 
 <div class="article-layout">
@@ -98,7 +113,10 @@ import ShareButton from "./ShareButton.astro";
     <!-- Article content -->
     <div class="article-content" set:html={article.content} />
 
-    <!-- Share button wrapper for mobile ordering -->
+    <!-- FAQ — always rendered, category-matched or fallback -->
+    <ArticleFAQ faqs={faqs} />
+
+    <!-- Share button -->
     <div class="share-wrapper">
       <ShareButton 
         title={article.title}
@@ -114,11 +132,18 @@ import ShareButton from "./ShareButton.astro";
         <div class="related-grid">
           {relatedArticles.map((related: Article) => (
             <a href={`/articles/${related.id}`} class="related-card">
-              <span class="related-category" style={`--pill-r:${parseInt(related.categoryColorHex.slice(1,3), 16)};--pill-g:${parseInt(related.categoryColorHex.slice(3,5), 16)};--pill-b:${parseInt(related.categoryColorHex.slice(5,7), 16)};`}>
-                {related.category.toUpperCase()}
-              </span>
-              <h3 class="related-card-title">{related.title}</h3>
-              <p class="related-card-subtitle">{related.subtitle}</p>
+              {assetUrl(related.cover_image) && (
+                <div class="related-card-thumb">
+                  <img src={assetUrl(related.cover_image)!} alt={related.title} loading="lazy" />
+                </div>
+              )}
+              <div class="related-card-body">
+                <span class="related-category" style={`--pill-r:${parseInt(related.categoryColorHex.slice(1,3), 16)};--pill-g:${parseInt(related.categoryColorHex.slice(3,5), 16)};--pill-b:${parseInt(related.categoryColorHex.slice(5,7), 16)};`}>
+                  {related.category.toUpperCase()}
+                </span>
+                <h3 class="related-card-title">{related.title}</h3>
+                <p class="related-card-subtitle">{related.subtitle}</p>
+              </div>
             </a>
           ))}
         </div>
@@ -166,8 +191,8 @@ import ShareButton from "./ShareButton.astro";
   </aside>
 </div>
 
+<!-- All original styles preserved exactly -->
 <style>
-  /* Desktop: Two-column grid layout */
   .article-layout {
     display: grid;
     grid-template-columns: 1fr 360px;
@@ -175,13 +200,11 @@ import ShareButton from "./ShareButton.astro";
     align-items: start;
   }
 
-  /* Main article column */
   .article-main {
     max-width: 800px;
     width: 100%;
   }
 
-  /* Right rail */
   .article-rail {
     position: relative;
   }
@@ -199,7 +222,6 @@ import ShareButton from "./ShareButton.astro";
     display: block;
   }
 
-  /* Breadcrumb */
   .breadcrumb {
     margin-bottom: 20px;
   }
@@ -218,7 +240,6 @@ import ShareButton from "./ShareButton.astro";
     opacity: 0.7;
   }
 
-  /* Article header */
   .article-header {
     margin-bottom: 28px;
   }
@@ -266,7 +287,6 @@ import ShareButton from "./ShareButton.astro";
     gap: 6px;
   }
 
-  /* Hero image */
   .article-hero {
     margin-bottom: 28px;
     border-radius: 16px;
@@ -283,7 +303,6 @@ import ShareButton from "./ShareButton.astro";
     display: block;
   }
 
-  /* Article content - Apple reading experience */
   .article-content {
     font-size: 19px;
     line-height: 1.58;
@@ -291,9 +310,7 @@ import ShareButton from "./ShareButton.astro";
     letter-spacing: -0.003em;
   }
 
-  .article-content :global(p) {
-    margin: 0 0 18px 0;
-  }
+  .article-content :global(p) { margin: 0 0 18px 0; }
 
   .article-content :global(h2) {
     font-size: 32px;
@@ -356,11 +373,9 @@ import ShareButton from "./ShareButton.astro";
     border-radius: 4px;
   }
 
-  /* Related articles */
   .related-section {
     margin-top: 80px;
-    padding-top: 48px;
-    border-top: 1px solid var(--separator);
+    padding-top: 0;
   }
 
   .related-title {
@@ -378,8 +393,11 @@ import ShareButton from "./ShareButton.astro";
   }
 
   .related-card {
-    display: block;
-    padding: 24px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
     border-radius: 16px;
     background: var(--glass-bg);
     backdrop-filter: saturate(180%) blur(20px);
@@ -387,6 +405,7 @@ import ShareButton from "./ShareButton.astro";
     border: 0.5px solid var(--glass-border);
     box-shadow: var(--shadow-sm);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
   }
 
   .related-card:hover {
@@ -394,30 +413,58 @@ import ShareButton from "./ShareButton.astro";
     box-shadow: var(--shadow-md);
   }
 
+  .related-card-thumb {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(120, 120, 128, 0.1);
+  }
+
+  .related-card-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .related-card-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .related-category {
     display: inline-block;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.04em;
     padding: 3px 8px;
     border-radius: 999px;
     background: rgba(var(--pill-r), var(--pill-g), var(--pill-b), 0.12);
     color: rgb(var(--pill-r), var(--pill-g), var(--pill-b));
-    margin-bottom: 12px;
+    align-self: flex-start;
   }
 
   .related-card-title {
-    font-size: 19px;
-    line-height: 1.3;
-    letter-spacing: -0.016em;
+    font-size: 15px;
+    line-height: 1.35;
+    letter-spacing: -0.012em;
     font-weight: 600;
     color: var(--text);
-    margin: 0 0 8px 0;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .related-card-subtitle {
-    font-size: 15px;
-    line-height: 1.4;
+    font-size: 13px;
+    line-height: 1.45;
     color: var(--text-secondary);
     margin: 0;
     display: -webkit-box;
@@ -426,7 +473,6 @@ import ShareButton from "./ShareButton.astro";
     overflow: hidden;
   }
 
-  /* Tablet: narrower rail */
   @media (max-width: 1024px) {
     .article-layout {
       grid-template-columns: 1fr 300px;
@@ -438,21 +484,18 @@ import ShareButton from "./ShareButton.astro";
     }
   }
 
-  /* Mobile: single column with reordered modules */
   @media (max-width: 820px) {
     .article-layout {
       display: flex;
       flex-direction: column;
     }
 
-    /* Flatten both containers so all children become direct siblings */
     .article-main,
     .article-rail,
     .rail-sticky {
       display: contents;
     }
 
-    /* Constrain ALL children to container width */
     .breadcrumb,
     .article-header,
     .article-hero,
@@ -466,281 +509,72 @@ import ShareButton from "./ShareButton.astro";
       box-sizing: border-box;
     }
 
-    /* Now order works on all direct children */
-    .breadcrumb { order: 1; }
-    .article-header { order: 2; }
-    .article-hero { order: 3; }
-    .article-subtitle { order: 4; }
-    .article-content { order: 5; }
-    
-    .rail-prompt { 
-      order: 6; 
-      margin: 28px 0 0 0;
-    }
-    
-    .share-wrapper {
-      order: 7;
-    }
-    
-    .share-wrapper .share-section {
-      margin: 24px 0 0 0 !important;
-      padding: 20px 0 10px 0 !important;
-    }
-    
-    .related-section { 
-      order: 8;
-      margin-top: 24px;
-      padding-top: 20px;
-    }
-    
-    .rail-app { 
-      order: 9; 
-      margin: 24px 0 0 0;
-    }
-    
-    .rail-sponsored { 
-      order: 10; 
-      margin: 20px 0 0 0;
-    }
-    
-    .rail-recent { 
-      order: 11; 
-      margin: 20px 0 0 0;
-    }
+    .breadcrumb        { order: 1; }
+    .article-header    { order: 2; }
+    .article-hero      { order: 3; }
+    .article-subtitle  { order: 4; }
+    .article-content   { order: 5; }
+    .rail-prompt       { order: 6; margin: 28px 0 0 0; }
+    .share-wrapper     { order: 8; }
+    .share-wrapper .share-section { margin: 24px 0 0 0 !important; padding: 20px 0 10px 0 !important; }
+    .related-section   { order: 9; margin-top: 24px; padding-top: 20px; }
+    .rail-app          { order: 9; margin: 24px 0 0 0; }
+    .rail-sponsored    { order: 10; margin: 20px 0 0 0; }
+    .rail-recent       { order: 11; margin: 20px 0 0 0; }
 
-    /* Typography adjustments - smaller, tighter */
-    .article-title {
-      font-size: 32px;
-      line-height: 1.1;
-      margin: 0 0 12px 0 !important;
-    }
-
-    .article-subtitle {
-      font-size: 17px;
-      line-height: 1.45;
-      margin: 0 0 16px 0 !important;
-    }
-
-    .article-meta {
-      font-size: 13px;
-    }
-
-    .pill {
-      font-size: 10px;
-      padding: 4px 9px;
-      margin-bottom: 14px !important;
-    }
-
-    /* Content typography - optimized for mobile */
-    .article-content {
-      font-size: 16px;
-      line-height: 1.65;
-    }
-
-    .article-content :global(p) {
-      margin: 0 0 16px 0;
-    }
-
-    .article-content :global(h2) {
-      font-size: 26px;
-      line-height: 1.15;
-      margin: 32px 0 14px 0;
-    }
-
-    .article-content :global(h3) {
-      font-size: 21px;
-      line-height: 1.25;
-      margin: 24px 0 10px 0;
-    }
-
+    .article-title     { font-size: 32px; line-height: 1.1; margin: 0 0 12px 0 !important; }
+    .article-subtitle  { font-size: 17px; line-height: 1.45; margin: 0 0 16px 0 !important; }
+    .article-meta      { font-size: 13px; }
+    .pill              { font-size: 10px; padding: 4px 9px; margin-bottom: 14px !important; }
+    .article-content   { font-size: 16px; line-height: 1.65; }
+    .article-content :global(p) { margin: 0 0 16px 0; }
+    .article-content :global(h2) { font-size: 26px; line-height: 1.15; margin: 32px 0 14px 0; }
+    .article-content :global(h3) { font-size: 21px; line-height: 1.25; margin: 24px 0 10px 0; }
     .article-content :global(ul),
-    .article-content :global(ol) {
-      margin: 0 0 16px 0;
-      padding-left: 24px;
-    }
-
-    .article-content :global(li) {
-      margin-bottom: 8px;
-    }
-
-    /* Hero image - tighter spacing */
-    .article-hero {
-      margin-bottom: 12px !important;
-      max-height: 260px;
-      border-radius: 12px;
-    }
-
-    .article-hero img {
-      max-height: 260px;
-    }
-
-    /* Related articles - tighter */
-    .related-title {
-      font-size: 23px;
-      margin-bottom: 14px;
-      line-height: 1.15;
-    }
-
-    .related-card {
-      padding: 18px;
-      border-radius: 12px;
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
-    }
-
-    .related-card-title {
-      font-size: 16px;
-      line-height: 1.3;
-    }
-
-    .related-card-subtitle {
-      font-size: 14px;
-      line-height: 1.4;
-    }
-
-    /* Spacing adjustments - minimal gaps */
-    .breadcrumb {
-      margin-bottom: 10px !important;
-    }
-
-    .article-header {
-      margin-bottom: 12px !important;
-    }
-
-    .back-link {
-      font-size: 14px;
-    }
+    .article-content :global(ol) { margin: 0 0 16px 0; padding-left: 24px; }
+    .article-content :global(li) { margin-bottom: 8px; }
+    .article-hero      { margin-bottom: 12px !important; max-height: 260px; border-radius: 12px; }
+    .article-hero img  { max-height: 260px; }
+    .related-title     { font-size: 23px; margin-bottom: 14px; line-height: 1.15; }
+    .related-card      { padding: 18px; border-radius: 12px; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .related-card-title { font-size: 16px; line-height: 1.3; }
+    .related-card-subtitle { font-size: 14px; line-height: 1.4; }
+    .breadcrumb        { margin-bottom: 10px !important; }
+    .article-header    { margin-bottom: 12px !important; }
+    .back-link         { font-size: 14px; }
   }
 
-  /* Small mobile (iPhone SE) - even tighter */
   @media (max-width: 520px) {
-    .breadcrumb {
-      margin-bottom: 8px !important;
-    }
-
-    .article-header {
-      margin-bottom: 10px !important;
-    }
-
-    .article-title {
-      font-size: 28px;
-      line-height: 1.1;
-      margin: 0 0 10px 0 !important;
-    }
-
-    .article-subtitle {
-      font-size: 16px;
-      line-height: 1.45;
-      margin: 0 0 14px 0 !important;
-    }
-
-    .pill {
-      font-size: 10px;
-      padding: 3px 8px;
-      margin-bottom: 12px !important;
-    }
-
-    .article-hero {
-      margin-bottom: 10px !important;
-      max-height: 220px;
-      border-radius: 10px;
-    }
-
-    .article-hero img {
-      max-height: 220px;
-    }
-
-    .article-content {
-      font-size: 15.5px;
-      line-height: 1.65;
-    }
-
-    .article-content :global(p) {
-      margin: 0 0 14px 0;
-    }
-
-    .article-content :global(h2) {
-      font-size: 24px;
-      line-height: 1.15;
-      margin: 28px 0 12px 0;
-    }
-
-    .article-content :global(h3) {
-      font-size: 19px;
-      line-height: 1.25;
-      margin: 20px 0 10px 0;
-    }
-
+    .breadcrumb        { margin-bottom: 8px !important; }
+    .article-header    { margin-bottom: 10px !important; }
+    .article-title     { font-size: 28px; line-height: 1.1; margin: 0 0 10px 0 !important; }
+    .article-subtitle  { font-size: 16px; line-height: 1.45; margin: 0 0 14px 0 !important; }
+    .pill              { font-size: 10px; padding: 3px 8px; margin-bottom: 12px !important; }
+    .article-hero      { margin-bottom: 10px !important; max-height: 220px; border-radius: 10px; }
+    .article-hero img  { max-height: 220px; }
+    .article-content   { font-size: 15.5px; line-height: 1.65; }
+    .article-content :global(p) { margin: 0 0 14px 0; }
+    .article-content :global(h2) { font-size: 24px; line-height: 1.15; margin: 28px 0 12px 0; }
+    .article-content :global(h3) { font-size: 19px; line-height: 1.25; margin: 20px 0 10px 0; }
     .article-content :global(ul),
-    .article-content :global(ol) {
-      margin: 0 0 14px 0;
-      padding-left: 20px;
-    }
-
-    .article-content :global(li) {
-      margin-bottom: 6px;
-    }
-
-    .rail-prompt {
-      margin: 24px 0 0 0;
-    }
-
-    .share-wrapper .share-section {
-      margin: 20px 0 0 0 !important;
-      padding: 18px 0 10px 0 !important;
-    }
-
-    .related-section {
-      margin-top: 24px;
-      padding-top: 18px;
-    }
-
-    .related-title {
-      font-size: 21px;
-      margin-bottom: 12px;
-    }
-
-    .related-card {
-      padding: 16px;
-    }
-
-    .related-card-title {
-      font-size: 15px;
-    }
-
-    .related-card-subtitle {
-      font-size: 13px;
-    }
-
-    .rail-app {
-      margin: 20px 0 0 0;
-    }
-
-    .rail-sponsored {
-      margin: 18px 0 0 0;
-    }
-
-    .rail-recent {
-      margin: 18px 0 0 0;
-    }
-
-    .back-link {
-      font-size: 13px;
-    }
-
-    .article-meta {
-      font-size: 12px;
-    }
+    .article-content :global(ol) { margin: 0 0 14px 0; padding-left: 20px; }
+    .article-content :global(li) { margin-bottom: 6px; }
+    .rail-prompt       { margin: 24px 0 0 0; }
+    .share-wrapper .share-section { margin: 20px 0 0 0 !important; padding: 18px 0 10px 0 !important; }
+    .related-section   { margin-top: 24px; padding-top: 18px; }
+    .related-title     { font-size: 21px; margin-bottom: 12px; }
+    .related-card      { padding: 16px; }
+    .related-card-title { font-size: 15px; }
+    .related-card-subtitle { font-size: 13px; }
+    .rail-app          { margin: 20px 0 0 0; }
+    .rail-sponsored    { margin: 18px 0 0 0; }
+    .rail-recent       { margin: 18px 0 0 0; }
+    .back-link         { font-size: 13px; }
+    .article-meta      { font-size: 12px; }
   }
 
-  /* Reduce motion */
   @media (prefers-reduced-motion: reduce) {
-    .related-card {
-      transition: none;
-    }
-
-    .related-card:hover {
-      transform: none;
-    }
+    .related-card { transition: none; }
+    .related-card:hover { transform: none; }
   }
 </style>

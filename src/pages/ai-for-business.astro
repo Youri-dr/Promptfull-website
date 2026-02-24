@@ -1,0 +1,402 @@
+---
+// src/pages/ai-for-business.astro
+import PageTemplate from '../layouts/PageTemplate.astro';
+
+// ── Directus config ───────────────────────────────────────────────────────────
+// Store your Directus URL in .env as PUBLIC_DIRECTUS_URL
+// e.g. PUBLIC_DIRECTUS_URL=https://your-project.directus.app
+const DIRECTUS_URL   = import.meta.env.DIRECTUS_URL ?? import.meta.env.PUBLIC_DIRECTUS_URL;
+const DIRECTUS_TOKEN = import.meta.env.DIRECTUS_TOKEN ?? import.meta.env.PUBLIC_DIRECTUS_TOKEN;
+
+// ── Keywords that define this pillar's topic ──────────────────────────────────
+// Scored against each article's title, excerpt, and category.
+// Title hits count 3x, category hits 2x, excerpt hits 1x.
+// Edit this list whenever the pillar content changes.
+const PILLAR_KEYWORDS = [
+  "ai", "artificial intelligence", "llm", "large language model",
+  "prompt", "prompting", "chatgpt", "claude", "gemini", "generative ai",
+  "business", "entrepreneur", "workflow", "productivity",
+  "hallucination", "content", "marketing", "automation", "creativity",
+];
+
+const MAX_RELATED = 6;
+
+// ── Fetch published articles from Directus ────────────────────────────────────
+let relatedArticles: {
+  title: string;
+  excerpt: string;
+  href: string;
+  category: string;
+  category_color: string;
+  reading_time: string;
+}[] = [];
+
+try {
+  const params = new URLSearchParams({
+    'filter[status][_eq]': 'published',
+    'fields': 'title,slug,excerpt,category,category_color,reading_time',
+    'limit': '-1',
+  });
+
+  const res = await fetch(`${DIRECTUS_URL}/items/articles?${params}`, {
+    headers: { Authorization: `Bearer ${DIRECTUS_TOKEN}` },
+  });
+
+  if (!res.ok) throw new Error(`Directus responded with ${res.status}`);
+
+  const json = await res.json();
+  console.log('[ai-for-business] Directus response:', JSON.stringify(json).slice(0, 500));
+  const { data } = json;
+
+  const scored = (data as any[]).map((article) => {
+    const titleText    = (article.title    ?? '').toLowerCase();
+    const excerptText  = (article.excerpt  ?? '').toLowerCase();
+    const categoryText = (article.category ?? '').toLowerCase();
+
+    const score = PILLAR_KEYWORDS.reduce((total, keyword) => {
+      const titleHits    = titleText.split(keyword).length - 1;
+      const excerptHits  = excerptText.split(keyword).length - 1;
+      const categoryHits = categoryText.split(keyword).length - 1;
+      return total + (titleHits * 3) + (categoryHits * 2) + excerptHits;
+    }, 0);
+
+    return { article, score };
+  });
+
+  relatedArticles = scored
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, MAX_RELATED)
+    .map(({ article }) => ({
+      title:          article.title,
+      excerpt:        article.excerpt ?? '',
+      href:           `/articles/${article.slug}`,
+      category:       article.category ?? 'Article',
+      category_color: article.category_color ?? '#888888',
+      reading_time:   article.reading_time ? `${article.reading_time} min` : '5 min',
+    }));
+} catch (err) {
+  console.warn('[ai-for-business] Could not load related articles from Directus:', err);
+  // Falls back to empty — section is hidden rather than breaking the build.
+}
+---
+
+<PageTemplate
+  title="AI for Business: The Complete Guide for Entrepreneurs & Creators"
+  description="A practical guide to using AI in your business — what it actually is, where it adds real value, and how to get results that go beyond generic outputs."
+>
+
+  <article class="pillar">
+
+    <!-- ── Hero ────────────────────────────────────────────────────────────── -->
+    <header class="pillar-hero">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-pill">AI for Business</span>
+        <span class="eyebrow-divider">·</span>
+        <span class="eyebrow-meta">20 min read</span>
+      </div>
+      <h1 class="pillar-title">
+        AI for Business: The Complete Guide for&nbsp;Entrepreneurs&nbsp;&amp;&nbsp;Creators
+      </h1>
+      <p class="pillar-intro">
+        Artificial intelligence is no longer experimental. It writes sales pages, generates ad creatives, summarises research, and automates entire workflows. But most entrepreneurs who try it walk away underwhelmed. This guide explains why that happens, and what to do about it.
+      </p>
+      <div class="hero-meta">
+        <span>Updated February 2026</span>
+        <span class="meta-dot">·</span>
+        <span>Promptfull Editorial</span>
+      </div>
+    </header>
+
+    <!-- ── Table of contents ────────────────────────────────────────────────── -->
+    <nav class="toc" aria-label="Table of contents">
+      <p class="toc-label">On this page</p>
+      <ol class="toc-list">
+        <li><a href="#what-ai-actually-is">What AI actually is</a></li>
+        <li><a href="#llms-explained">How large language models work</a></li>
+        <li><a href="#why-ai-sounds-smart">Why AI sounds smart but gets things wrong</a></li>
+        <li><a href="#what-ai-can-do">What AI can do for your business</a></li>
+        <li><a href="#what-ai-cannot-do">What AI cannot do</a></li>
+        <li><a href="#the-role-of-prompting">The role of prompting</a></li>
+        <li><a href="#common-misconceptions">Common misconceptions</a></li>
+        <li><a href="#how-to-start">How to start using AI strategically</a></li>
+        <li><a href="#related-reading">Related reading</a></li>
+      </ol>
+    </nav>
+
+    <!-- ── Body ────────────────────────────────────────────────────────────── -->
+    <div class="pillar-body">
+
+      <section id="what-ai-actually-is">
+        <h2>What AI Actually Is</h2>
+        <p>
+          Artificial Intelligence refers to systems that can perform tasks that typically require human intelligence — writing, analysing, classifying, predicting, generating ideas. There are many types of AI, but the kind most entrepreneurs encounter today (ChatGPT, Claude, Gemini) is called <strong>Generative AI</strong>.
+        </p>
+        <p>
+          Generative AI does not think. It predicts. More specifically, it predicts which word should come next based on patterns learned from enormous amounts of text. That is why it can write blog posts, generate emails, brainstorm product ideas, and explain complex topics. It is also why it can confidently produce something factually wrong. The system is optimised for likelihood, not truth.
+        </p>
+        <p>
+          For entrepreneurs, this distinction matters enormously. If you treat AI like a search engine, you get surface-level answers. If you treat it like a prediction engine that needs direction, you unlock something genuinely useful. Understanding that difference is the whole game.
+        </p>
+      </section>
+
+      <section id="llms-explained">
+        <h2>How Large Language Models Work</h2>
+        <p>
+          A Large Language Model (LLM) is the engine behind tools like ChatGPT. It has been trained on vast amounts of text, and from that training it has learned patterns in language: how sentences are structured, how arguments are built, how persuasion works, how tone shifts between audiences.
+        </p>
+        <p>
+          What it has not learned is memory of you. It does not store your documents unless you provide them in the conversation. It does not remember past sessions by default. It does not understand meaning the way a person does. What it does is calculate probabilities. When you ask a question, the model predicts a sequence of words that statistically fits your input. That is why the clarity of your request changes the output so dramatically.
+        </p>
+        <div class="callout callout-insight">
+          <span class="callout-icon">💡</span>
+          <p>The more specific context you give an LLM, the narrower the probability space it has to work in. Narrower probability space means more relevant, more precise output.</p>
+        </div>
+      </section>
+
+      <section id="why-ai-sounds-smart">
+        <h2>Why AI Sounds Smart but Gets Things Wrong</h2>
+        <p>
+          Many entrepreneurs assume AI is knowledgeable. It is not knowledgeable. It is <em>fluent</em>. Fluency can look like expertise, and that is where the risk lives.
+        </p>
+        <p>
+          AI can invent statistics, cite sources that do not exist, oversimplify complex strategies, and miss critical business context. This is often called hallucination, though the term makes it sound more dramatic than it is. It happens because the model fills gaps with the most probable continuation of your input, and sometimes the most probable thing is not the true thing.
+        </p>
+        <p>
+          This does not mean AI is broken. It means AI is a tool with a specific failure mode you need to understand. Verification remains your responsibility. Once you accept that, you can use it confidently.
+        </p>
+      </section>
+
+      <section id="what-ai-can-do">
+        <h2>What AI Can Do for Your Business</h2>
+        <p>
+          When used strategically, AI can support nearly every business function. Here is where entrepreneurs consistently find it most valuable.
+        </p>
+        <h3>Content Creation</h3>
+        <p>
+          AI is genuinely good at removing blank-page resistance. Give it a clear brief, your audience, and the outcome you want, and it can produce a first draft, an outline, or a set of variations in seconds. The output will rarely be finished work, but as a starting point it changes the economics of content production significantly.
+        </p>
+        <h3>Marketing and Sales Copy</h3>
+        <p>
+          Landing page rewrites, headline variations, offer positioning, objection handling — AI can generate multiple angles quickly. The quality depends entirely on how clearly you define the target audience, the desired outcome, the emotional drivers, and any constraints. Vague input produces vague marketing. Precise input produces work that is actually usable.
+        </p>
+        <h3>Idea Generation</h3>
+        <p>
+          AI can expand your thinking rapidly. Product angles, lead magnet ideas, hooks, positioning shifts — it is useful for quantity, and from quantity you choose quality. The important thing to remember is that it does not know your market unless you tell it. The ideas are only as relevant as the context you provide.
+        </p>
+        <h3>Productivity and Operations</h3>
+        <p>
+          Meeting summaries, research digests, task breakdowns, standard operating procedure drafts — AI handles these well. They are high-effort, low-creativity tasks that consume time without requiring judgment. Delegating them to AI is one of the most straightforward ways to reclaim hours in a week.
+        </p>
+      </section>
+
+      <section id="what-ai-cannot-do">
+        <h2>What AI Cannot Do for Your Business</h2>
+        <p>
+          There are real limits, and being clear about them makes you a better user of the technology.
+        </p>
+        <p>
+          AI cannot know your customer better than you do. It cannot understand your brand voice without examples. It cannot make high-level strategic trade-offs that require lived business experience. It cannot replace the judgment that comes from actually operating in your market.
+        </p>
+        <p>
+          What it does is amplify what you provide. Shallow input produces shallow output. Structured, specific context produces structured, useful results. The ceiling of what AI can do for you is set by the quality of what you give it to work with.
+        </p>
+        <div class="callout callout-warning">
+          <span class="callout-icon">⚠️</span>
+          <p>AI used as a replacement for strategic thinking produces noise. AI used as an accelerant for strategic thinking produces compounding returns.</p>
+        </div>
+      </section>
+
+      <section id="the-role-of-prompting">
+        <h2>The Role of Prompting</h2>
+        <p>
+          This is where most entrepreneurs miss the real opportunity. The quality of AI output is directly shaped by how you communicate with it. It is not about writing longer prompts. It is about writing clearer ones.
+        </p>
+        <p>Compare these two requests:</p>
+        <div class="prompt-compare">
+          <div class="prompt-example prompt-weak">
+            <span class="prompt-label prompt-label-weak">Weak</span>
+            <p>"Write a marketing text for my product."</p>
+          </div>
+          <div class="prompt-example prompt-strong">
+            <span class="prompt-label prompt-label-strong">Strong</span>
+            <p>"Write a persuasive marketing message for a productivity app aimed at freelance designers who struggle with missed deadlines. Focus on time control and stress reduction. Keep it under 80 words."</p>
+          </div>
+        </div>
+        <p>
+          The difference between those two prompts is not subtle. The second one defines the audience, the goal, the emotional angle, and the format. When you provide that structure, you shift from generic generation to something that actually resembles strategic collaboration.
+        </p>
+        <p>
+          Prompting is a skill, and like any skill it improves with practice and the right mental model. The more intentional your input, the more consistently powerful your output.
+        </p>
+      </section>
+
+      <section id="common-misconceptions">
+        <h2>Common Misconceptions About AI in Business</h2>
+        <div class="misconceptions-grid">
+          <div class="misconception-card">
+            <p class="misconception-myth">"The longer the prompt, the better the output."</p>
+            <p class="misconception-truth">Clarity beats length every time. A focused 30-word prompt outperforms a rambling 300-word one.</p>
+          </div>
+          <div class="misconception-card">
+            <p class="misconception-myth">"AI remembers our previous conversations."</p>
+            <p class="misconception-truth">Most models do not retain memory between sessions unless a specific memory feature is enabled. Each conversation starts fresh.</p>
+          </div>
+          <div class="misconception-card">
+            <p class="misconception-myth">"AI replaces human creativity."</p>
+            <p class="misconception-truth">AI accelerates creativity. It does not originate lived experience, genuine vision, or taste — the things that make creative work actually resonate.</p>
+          </div>
+          <div class="misconception-card">
+            <p class="misconception-myth">"If AI says it, it's probably true."</p>
+            <p class="misconception-truth">AI predicts patterns, not facts. Verification is always your responsibility. That is not a limitation to work around; it is just how the tool works.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-to-start">
+        <h2>How to Start Using AI Strategically</h2>
+        <p>
+          If you are an entrepreneur or creator picking this up seriously for the first time, three principles will take you further than any prompt template.
+        </p>
+        <p>
+          First, give context before asking for output. AI performs much better when it understands who you are, who you are writing for, and what you are trying to accomplish before you ask it to produce anything.
+        </p>
+        <p>
+          Second, define the goal of the task clearly. Not "write me a caption" but "write me a caption for this product launch that will get freelance designers to stop scrolling." The goal shapes everything.
+        </p>
+        <p>
+          Third, ask for structured results. Frameworks, steps, and examples help the model organise its output in ways that are actually usable. Open-ended requests tend to produce open-ended, hard-to-action results.
+        </p>
+        <p>
+          Entrepreneurs who understand what AI actually does, where it consistently fails, and how prompting shapes its output will get far more out of it than those who test it casually and conclude it is not that impressive. The fundamentals are not technical. They are strategic. Once you have them, AI stops feeling unpredictable and starts behaving like a tool you actually trust.
+        </p>
+      </section>
+
+    </div>
+
+    <!-- ── Related articles ─────────────────────────────────────────────────── -->
+    {relatedArticles.length > 0 && (
+      <section id="related-reading" class="related-section">
+        <div class="related-header">
+          <h2>Related Reading</h2>
+          <p>Go deeper on the topics covered in this guide.</p>
+        </div>
+        <div class="articles-grid">
+          {relatedArticles.map((article) => (
+            <a href={article.href} class="article-card">
+              <div class="article-card-top">
+                <span
+                  class="article-category"
+                  style={`background: ${article.category_color}18; color: ${article.category_color};`}
+                >
+                  {article.category}
+                </span>
+                <span class="article-read-time">{article.reading_time}</span>
+              </div>
+              <h3 class="article-card-title">{article.title}</h3>
+              <p class="article-card-desc">{article.excerpt}</p>
+              <span class="article-card-cta">Read article →</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+  </article>
+</PageTemplate>
+
+<style>
+  :root {
+    --ink:         #1D1D1F;
+    --ink-soft:    rgba(60, 60, 67, 0.75);
+    --ink-faint:   rgba(60, 60, 67, 0.45);
+    --surface:     #F5F5F7;
+    --card:        #FFFFFF;
+    --blue:        #007AFF;
+    --blue-soft:   rgba(0, 122, 255, 0.08);
+    --orange:      #FF9500;
+    --orange-soft: rgba(255, 149, 0, 0.08);
+    --radius-sm:   8px;
+    --radius-md:   14px;
+    --radius-lg:   20px;
+  }
+
+  .pillar {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+  }
+
+  /* Hero */
+  .pillar-hero     { margin-bottom: 52px; }
+  .hero-eyebrow    { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .eyebrow-pill    { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); background: var(--blue-soft); padding: 4px 10px; border-radius: 20px; }
+  .eyebrow-divider,
+  .eyebrow-meta    { font-size: 13px; color: var(--ink-faint); }
+  .pillar-title    { font-size: clamp(32px, 5vw, 48px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; color: var(--ink); margin: 0 0 24px; }
+  .pillar-intro    { font-size: 19px; line-height: 1.65; color: var(--ink-soft); margin: 0 0 20px; }
+  .hero-meta       { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-faint); }
+  .meta-dot        { opacity: 0.5; }
+
+  /* TOC */
+  .toc         { background: var(--surface); border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 56px; }
+  .toc-label   { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 14px; }
+  .toc-list    { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  .toc-list a  { font-size: 15px; color: var(--blue); text-decoration: none; line-height: 1.5; transition: opacity 0.15s; }
+  .toc-list a:hover { opacity: 0.7; }
+
+  /* Body */
+  .pillar-body section { margin-bottom: 56px; }
+  .pillar-body h2      { font-size: 26px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); margin: 0 0 18px; padding-top: 4px; }
+  .pillar-body h3      { font-size: 18px; font-weight: 600; color: var(--ink); margin: 28px 0 10px; }
+  .pillar-body p       { font-size: 17px; line-height: 1.75; color: var(--ink-soft); margin: 0 0 18px; }
+  .pillar-body strong  { color: var(--ink); font-weight: 600; }
+  .pillar-body em      { font-style: italic; }
+
+  /* Callouts */
+  .callout         { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; border-radius: var(--radius-md); margin: 28px 0; }
+  .callout p       { margin: 0; font-size: 15px; }
+  .callout-insight { background: var(--blue-soft); border-left: 3px solid var(--blue); }
+  .callout-warning { background: var(--orange-soft); border-left: 3px solid var(--orange); }
+  .callout-icon    { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Prompt compare */
+  .prompt-compare       { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 24px 0; }
+  .prompt-example       { padding: 18px 20px; border-radius: var(--radius-md); }
+  .prompt-weak          { background: rgba(255, 45, 85, 0.06); border: 1px solid rgba(255, 45, 85, 0.15); }
+  .prompt-strong        { background: rgba(52, 199, 89, 0.06); border: 1px solid rgba(52, 199, 89, 0.15); }
+  .prompt-label         { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; margin-bottom: 10px; }
+  .prompt-label-weak    { background: rgba(255, 45, 85, 0.12); color: #FF2D55; }
+  .prompt-label-strong  { background: rgba(52, 199, 89, 0.15); color: #1A9E45; }
+  .prompt-example p     { font-size: 15px; margin: 0; color: var(--ink); font-style: italic; line-height: 1.6; }
+
+  /* Misconceptions */
+  .misconceptions-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+  .misconception-card   { background: var(--surface); border-radius: var(--radius-md); padding: 20px; }
+  .misconception-myth   { font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 10px; font-style: italic; }
+  .misconception-truth  { font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin: 0; }
+
+  /* Related */
+  .related-section   { border-top: 1px solid rgba(60, 60, 67, 0.1); padding-top: 56px; margin-top: 20px; }
+  .related-header    { margin-bottom: 32px; }
+  .related-header h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); margin: 0 0 6px; }
+  .related-header p  { font-size: 15px; color: var(--ink-faint); margin: 0; }
+
+  .articles-grid      { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .article-card       { display: flex; flex-direction: column; gap: 10px; padding: 20px; background: var(--card); border: 1px solid rgba(60, 60, 67, 0.1); border-radius: var(--radius-lg); text-decoration: none; transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
+  .article-card:hover { border-color: rgba(0, 122, 255, 0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.06); transform: translateY(-2px); }
+  .article-card-top   { display: flex; align-items: center; justify-content: space-between; }
+  .article-category   { font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; }
+  .article-read-time  { font-size: 12px; color: var(--ink-faint); }
+  .article-card-title { font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.4; margin: 0; }
+  .article-card-desc  { font-size: 13px; line-height: 1.6; color: var(--ink-soft); margin: 0; flex: 1; }
+  .article-card-cta   { font-size: 13px; font-weight: 600; color: var(--blue); margin-top: 4px; }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    .pillar               { padding: 40px 20px 80px; }
+    .prompt-compare       { grid-template-columns: 1fr; }
+    .misconceptions-grid  { grid-template-columns: 1fr; }
+    .articles-grid        { grid-template-columns: 1fr; }
+  }
+</style>
