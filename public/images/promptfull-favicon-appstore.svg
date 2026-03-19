@@ -11,8 +11,17 @@
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs1" />
+  <rect
+     style="fill:#ffffff"
+     id="rect1"
+     width="1056.7213"
+     height="1056.7212"
+     x="-15.5782"
+     y="-15.578198"
+     ry="0" />
   <g
-     id="g1">
+     id="g1"
+     transform="matrix(0.83884749,0,0,0.90209401,80.493316,65.007506)">
     <g
        id="g2"
        transform="translate(4.9967412e-5,7.8149771)">

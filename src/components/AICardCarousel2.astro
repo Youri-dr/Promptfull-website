@@ -1,5 +1,6 @@
 ---
 // src/components/AICardCarousel2.astro
+import { renderSvgFromSFSymbol } from '../utils/sfSymbolToSvg';
 
 type AICardItem = {
   id: string;
@@ -29,15 +30,6 @@ function hexToRgb(hex?: string): { r: number; g: number; b: number } {
   };
 }
 
-function heroFallback(sym?: string): string {
-  const key = (sym ?? "").toLowerCase();
-  if (key.includes("spark")) return "✦";
-  if (key.includes("bolt")) return "⚡";
-  if (key.includes("wand")) return "✨";
-  if (key.includes("brain")) return "🧠";
-  return "✦";
-}
-
 function formatLikes(likes: number): string {
   if (likes >= 10000) {
     return `${Math.floor(likes / 1000)}k`;
@@ -52,10 +44,25 @@ function formatLikes(likes: number): string {
 
 <section class="pf-carousel" aria-label="AI Cards">
   <div class="pf-rail-wrap">
+
+    <!-- Arrows inside the wrapper but visually outside via negative position -->
+    <button class="pf-arrow pf-arrow-prev" aria-label="Scroll left" disabled>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <button class="pf-arrow pf-arrow-next" aria-label="Scroll right">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
     <div class="pf-rail" data-carousel-rail tabindex="0">
       {items.map((item: AICardItem) => {
         const { r, g, b } = hexToRgb(item.categoryColorHex);
         const style = `--cat-r:${r};--cat-g:${g};--cat-b:${b};`;
+        const iconSvg = renderSvgFromSFSymbol(item.heroSymbol ?? 'sparkles', 48, 'white', 'pf-hero-svg');
 
         return (
           <article
@@ -70,7 +77,6 @@ function formatLikes(likes: number): string {
               <span class="pf-pill">
                 {String(item.category || "").toUpperCase()}
               </span>
-
               <span class="pf-like">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
@@ -81,7 +87,7 @@ function formatLikes(likes: number): string {
 
             <div class="pf-hero">
               <div class="pf-hero-center">
-                <div class="pf-hero-icon" aria-hidden="true">{heroFallback(item.heroSymbol)}</div>
+                <div class="pf-hero-icon" aria-hidden="true" set:html={iconSvg} />
                 <div class="pf-hero-cat">{item.category}</div>
               </div>
             </div>
@@ -94,7 +100,7 @@ function formatLikes(likes: number): string {
         );
       })}
 
-      {/* ✅ Locked card */}
+      {/* Locked card */}
       {showLockedCard && (
         <a href={appUrl} class="pf-ai-card locked-card" target="_blank" rel="noopener">
           <div class="locked-overlay">
@@ -125,16 +131,17 @@ function formatLikes(likes: number): string {
 </section>
 
 <style>
-  /* Carousel section */
   .pf-carousel { 
     margin-top: 32px;
   }
 
+  /* overflow: visible so the arrows can poke outside the box */
   .pf-rail-wrap { 
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
 
+  /* Clip only the rail itself, not the whole wrapper */
   .pf-rail {
     display: grid;
     grid-auto-flow: column;
@@ -144,23 +151,78 @@ function formatLikes(likes: number): string {
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    scroll-padding: 0;
-    padding: 8px 0 16px;
-    padding-left: calc(50% - 170px - 176px); /* Center second card: 50% - half card width - (card width + gap) */
+    scroll-behavior: smooth;
+    padding: 8px 0 24px;
+    padding-left: calc(50% - 170px - 176px);
     padding-right: 20px;
 
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  
-  .pf-rail::-webkit-scrollbar { 
-    display: none; 
+
+  .pf-rail::-webkit-scrollbar {
+    display: none;
   }
+
+  /* ── Arrow buttons: absolute, pushed outside with negative values ── */
+  .pf-arrow {
+    position: absolute;
+    top: 50%;
+    /* nudge up to visually center on the cards, above the scrollbar padding */
+    transform: translateY(calc(-50% - 12px));
+    z-index: 10;
+
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.10),
+      0 1px 2px rgba(0, 0, 0, 0.06);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.75);
+
+    transition: 
+      background 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease,
+      opacity 0.2s ease;
+  }
+
+  .pf-arrow:hover {
+    background: #fff;
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.14),
+      0 1px 4px rgba(0, 0, 0, 0.08);
+    /* keep the vertical translate, add scale */
+    transform: translateY(calc(-50% - 12px)) scale(1.06);
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .pf-arrow:active {
+    transform: translateY(calc(-50% - 12px)) scale(0.96);
+  }
+
+  .pf-arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Negative values push them outside the wrapper edge */
+  .pf-arrow-prev { left: -52px; }
+  .pf-arrow-next { right: -52px; }
 
   /* AI Card */
   .pf-ai-card {
     scroll-snap-align: start;
-
     border-radius: 24px;
     background: rgba(255, 255, 255, 0.72);
     backdrop-filter: saturate(180%) blur(20px);
@@ -169,18 +231,14 @@ function formatLikes(likes: number): string {
       0 2px 8px rgba(0, 0, 0, 0.04),
       0 8px 24px rgba(0, 0, 0, 0.08);
     border: 0.5px solid rgba(0, 0, 0, 0.04);
-
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-
     height: 420px;
     box-sizing: border-box;
-
     cursor: pointer;
     outline: none;
-    
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -254,10 +312,18 @@ function formatLikes(likes: number): string {
   }
 
   .pf-hero-icon {
-    font-size: 48px;
-    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
     line-height: 1;
+  }
+
+  .pf-hero-icon :global(.pf-hero-svg) {
+    width: 48px;
+    height: 48px;
+    stroke: white;
+    color: white;
   }
 
   .pf-hero-cat {
@@ -279,7 +345,6 @@ function formatLikes(likes: number): string {
     letter-spacing: -0.02em;
     line-height: 1.15;
     color: rgba(0, 0, 0, 0.88);
-
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -291,7 +356,6 @@ function formatLikes(likes: number): string {
     font-size: 15px;
     line-height: 1.4;
     color: rgba(60, 60, 67, 0.75);
-
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -304,7 +368,7 @@ function formatLikes(likes: number): string {
       0 0 0 4px rgba(0, 122, 255, 0.3);
   }
 
-  /* ✅ Locked card styles */
+  /* Locked card */
   .locked-card {
     position: relative;
     overflow: hidden;
@@ -314,15 +378,8 @@ function formatLikes(likes: number): string {
   .locked-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      linear-gradient(135deg, 
-        rgba(124, 92, 255, 0.1),
-        rgba(0, 122, 255, 0.1)
-      );
+    inset: 0;
+    background: linear-gradient(135deg, rgba(124, 92, 255, 0.1), rgba(0, 122, 255, 0.1));
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
@@ -386,13 +443,10 @@ function formatLikes(likes: number): string {
     transform: translateX(2px);
   }
 
-  /* Scroll hint overlay */
+  /* Scroll hint — clips to the rail area only */
   .pf-scroll-hint {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: rgba(0, 0, 0, 0.18);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -436,82 +490,87 @@ function formatLikes(likes: number): string {
     50% { transform: translateX(6px); }
   }
 
-  /* Mobile */
+  /* Mobile — hide arrows, touch is enough */
   @media (max-width: 520px) {
-    .pf-carousel {
-      margin-top: 28px;
-    }
+    .pf-carousel { margin-top: 28px; }
 
     .pf-rail {
       grid-auto-columns: 82vw;
       gap: 12px;
-      padding-left: calc(50% - 41vw - 47vw); /* Center second card on mobile */
+      padding-left: calc(50% - 41vw - 47vw);
       padding-right: 16px;
     }
-    
-    .pf-ai-card { 
-      height: 400px;
-    }
 
-    .pf-ai-title {
-      font-size: 19px;
-    }
+    .pf-arrow { display: none; }
 
-    .pf-ai-sub {
-      font-size: 14px;
-    }
-
-    .lock-title {
-      font-size: 24px;
-    }
-
-    .lock-subtitle {
-      font-size: 16px;
-    }
-
-    .lock-icon {
-      width: 40px;
-      height: 40px;
-    }
+    .pf-ai-card { height: 400px; }
+    .pf-ai-title { font-size: 19px; }
+    .pf-ai-sub { font-size: 14px; }
+    .lock-title { font-size: 24px; }
+    .lock-subtitle { font-size: 16px; }
+    .lock-icon { width: 40px; height: 40px; }
   }
 </style>
 
 <script>
-  // Initialize carousels and scroll hints
   document.addEventListener('DOMContentLoaded', () => {
     const carousels = document.querySelectorAll('.pf-carousel');
-    
+
     carousels.forEach((carousel) => {
-      const rail = carousel.querySelector('.pf-rail');
-      const hint = carousel.querySelector('.pf-scroll-hint');
-      
-      if (!rail || !hint) return;
+      const rail    = carousel.querySelector('.pf-rail') as HTMLElement;
+      const hint    = carousel.querySelector('.pf-scroll-hint');
+      const btnPrev = carousel.querySelector('.pf-arrow-prev') as HTMLButtonElement;
+      const btnNext = carousel.querySelector('.pf-arrow-next') as HTMLButtonElement;
 
-      const hideHint = () => {
-        hint.classList.add('hidden');
-      };
+      if (!rail) return;
 
-      rail.addEventListener('scroll', hideHint, { once: true });
-      rail.addEventListener('touchstart', hideHint, { once: true });
-      rail.addEventListener('mousedown', hideHint, { once: true });
+      // ── Scroll hint ──
+      if (hint) {
+        const hideHint = () => hint.classList.add('hidden');
+        rail.addEventListener('scroll',     hideHint, { once: true });
+        rail.addEventListener('touchstart', hideHint, { once: true });
+        rail.addEventListener('mousedown',  hideHint, { once: true });
+        setTimeout(hideHint, 5000);
+      }
 
-      setTimeout(hideHint, 5000);
+      // ── Arrow state ──
+      function updateArrows() {
+        if (!btnPrev || !btnNext) return;
+        btnPrev.disabled = rail.scrollLeft <= 0;
+        btnNext.disabled = rail.scrollLeft >= rail.scrollWidth - rail.clientWidth - 1;
+      }
+
+      function getCardWidth(): number {
+        const firstCard = rail.querySelector('.pf-ai-card') as HTMLElement;
+        if (!firstCard) return 356;
+        return firstCard.offsetWidth + 16;
+      }
+
+      if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+          rail.scrollBy({ left: -getCardWidth(), behavior: 'smooth' });
+        });
+      }
+
+      if (btnNext) {
+        btnNext.addEventListener('click', () => {
+          rail.scrollBy({ left: getCardWidth(), behavior: 'smooth' });
+        });
+      }
+
+      rail.addEventListener('scroll', updateArrows);
+      window.addEventListener('resize', updateArrows);
+      updateArrows();
     });
 
-    // Click handlers for cards
+    // ── Card click handlers ──
     const cards = document.querySelectorAll('.pf-ai-card:not(.locked-card)');
-    
     cards.forEach((card) => {
       const htmlCard = card as HTMLElement;
-      
       htmlCard.addEventListener('click', () => {
         const cardId = htmlCard.getAttribute('data-ai-id');
-        
-        if (cardId) {
-          window.location.href = `/cards/${cardId}`;
-        }
+        if (cardId) window.location.href = `/cards/${cardId}`;
       });
-
       htmlCard.style.cursor = 'pointer';
     });
   });

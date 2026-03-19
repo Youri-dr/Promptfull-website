@@ -3,151 +3,130 @@
 import NewsletterCard from "./NewsletterCard.astro";
 ---
 <footer class="page-footer">
-  <!-- Newsletter Section -->
-  <div class="footer-newsletter">
-    <NewsletterCard
-      title="Stay in the Loop"
-      description="Get weekly insights on AI prompting, new articles, and product updates."
-    />
-  </div>
-
-  <div class="footer-content">
-    <div class="footer-brand">
-      <strong>Promptfull</strong>
-      <p>Master AI prompting, naturally.</p>
-    </div>
-
-    <div class="footer-links">
-      <div class="footer-column">
-        <h4>Product</h4>
-        <ul>
-          <li><a href="/app">iOS App</a></li>
-          <li><a href="/articles">Articles</a></li>
-          <li><a href="/ai-updates">AI Updates</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <h4>Learn</h4>
-        <ul>
-          <li><a href="/ai-for-business">AI for Business</a></li>
-          <li><a href="/about">Our Story</a></li>
-          <li><a href="/team">Team</a></li>
-          <li><a href="/contact">Contact</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-column">
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="/privacy">Privacy</a></li>
-          <li><a href="/terms">Terms</a></li>
-          <li><a href="/cookies">Cookies</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-
-  <div class="footer-bottom">
-    <p>&copy; {new Date().getFullYear()} Promptfull. All rights reserved.</p>
-  </div>
+<!-- Newsletter Section -->
+<div class="footer-newsletter">
+<NewsletterCard
+title="Stay in the Loop"
+description="Get weekly insights on AI prompting, new articles, and product updates."
+/>
+</div>
+<div class="footer-content">
+<div class="footer-brand">
+<strong>Promptfull</strong>
+<p>Master AI prompting, naturally.</p>
+</div>
+<div class="footer-links">
+<div class="footer-column">
+<h4>Product</h4>
+<ul>
+<li><a href="/app">iOS App</a></li>
+<li><a href="/articles">Articles</a></li>
+<li><a href="/ai-updates">AI Updates</a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h4>Learn</h4>
+<ul>
+<li><a href="/ai-for-business">AI for Business</a></li>
+<li><a href="/about">Our Story</a></li>
+<li><a href="/contact">Contact</a></li>
+</ul>
+</div>
+<div class="footer-column">
+<h4>Legal</h4>
+<ul>
+<li><a href="/privacy">Privacy</a></li>
+<li><a href="/terms">Terms</a></li>
+<li><a href="/cookies">Cookies</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<p>&copy; {new Date().getFullYear()} Promptfull. All rights reserved.</p>
+</div>
 </footer>
-
 <style>
-  /* Footer */
-  .page-footer {
-    background: #1D1D1F;
-    color: rgba(255, 255, 255, 0.5);
-    padding: 60px 20px 32px;
-    margin-top: 80px;
+/* Footer */
+.page-footer {
+background: #1D1D1F;
+color: rgba(255, 255, 255, 0.5);
+padding: 60px 20px 32px;
   }
-
-  /* Newsletter */
-  .footer-newsletter {
-    max-width: 1060px;
-    margin: 0 auto 60px;
+/* Newsletter */
+.footer-newsletter {
+max-width: 1060px;
+margin: 0 auto 60px;
   }
-
-  .footer-content {
-    max-width: 1060px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 60px;
-    margin-bottom: 48px;
+.footer-content {
+max-width: 1060px;
+margin: 0 auto;
+display: grid;
+grid-template-columns: 1fr 2fr;
+gap: 60px;
+margin-bottom: 48px;
   }
-
-  .footer-brand strong {
-    font-size: 20px;
-    font-weight: 700;
-    display: block;
-    margin-bottom: 8px;
-    color: #fff;
+.footer-brand strong {
+font-size: 20px;
+font-weight: 700;
+display: block;
+margin-bottom: 8px;
+color: #fff;
   }
-
-  .footer-brand p {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
+.footer-brand p {
+font-size: 14px;
+color: rgba(255, 255, 255, 0.6);
   }
-
-  .footer-links {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+.footer-links {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 40px;
   }
-
-  .footer-column h4 {
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 12px;
+.footer-column h4 {
+font-size: 13px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+color: rgba(255, 255, 255, 0.5);
+margin-bottom: 12px;
   }
-
-  .footer-column ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.footer-column ul {
+list-style: none;
+padding: 0;
+margin: 0;
   }
-
-  .footer-column a {
-    display: block;
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.75);
-    text-decoration: none;
-    padding: 6px 0;
-    transition: color 0.2s ease;
+.footer-column a {
+display: block;
+font-size: 14px;
+color: rgba(255, 255, 255, 0.75);
+text-decoration: none;
+padding: 6px 0;
+transition: color 0.2s ease;
   }
-
-  .footer-column a:hover { color: #fff; }
-
-  /* Bottom bar */
-  .footer-bottom {
-    max-width: 1060px;
-    margin: 0 auto;
-    padding-top: 32px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    text-align: center;
+.footer-column a:hover { color: #fff; }
+/* Bottom bar */
+.footer-bottom {
+max-width: 1060px;
+margin: 0 auto;
+padding-top: 32px;
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+text-align: center;
   }
-
-  .footer-bottom p {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0;
+.footer-bottom p {
+font-size: 13px;
+color: rgba(255, 255, 255, 0.5);
+margin: 0;
   }
-
-  /* Mobile */
-  @media (max-width: 768px) {
-    .page-footer    { padding: 48px 20px 24px; }
-    .footer-newsletter { margin-bottom: 48px; }
-    .footer-content {
-      grid-template-columns: 1fr;
-      gap: 40px;
-      margin-bottom: 32px;
+/* Mobile */
+@media (max-width: 768px) {
+.page-footer    { padding: 48px 20px 24px; }
+.footer-newsletter { margin-bottom: 48px; }
+.footer-content {
+grid-template-columns: 1fr;
+gap: 40px;
+margin-bottom: 32px;
     }
-    .footer-links   { grid-template-columns: 1fr; gap: 32px; }
-    .footer-pillar-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
+.footer-links   { grid-template-columns: 1fr; gap: 32px; }
+.footer-pillar-inner { flex-direction: column; align-items: flex-start; gap: 8px; }
   }
 </style>

@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import PageTemplate from "../layouts/PageTemplate.astro";
 import ArticleCard from "../components/ArticleCard.astro";
 import { getArticles, getImageUrl, formatReadingTime, formatPublishDate } from "../lib/directus";
 
@@ -20,7 +20,7 @@ const transformedArticles = allArticles.map(article => ({
 }));
 ---
 
-<Layout title="All Articles — Promptfull">
+<PageTemplate title="All Articles" description="In-depth guides on AI prompts, design, and productivity.">
   <div class="articles-page">
     <!-- Page header -->
     <header class="page-header">
@@ -70,7 +70,7 @@ const transformedArticles = allArticles.map(article => ({
       <p>No articles found. Try a different search term.</p>
     </div>
   </div>
-</Layout>
+</PageTemplate>
 
 <style>
   .articles-page {

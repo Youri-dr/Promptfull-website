@@ -13,8 +13,8 @@ const { subject, headline, content, backgroundColor } = Astro.props;
 const formattedContent = content
   .split('\n\n')
   .map(paragraph => {
-    const formatted = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    return `<p>${formatted}</p>`;
+    const formatted = paragraph.replace(/\*\*(.*?)\*\*/g, '<strong style="color:#ffffff;font-weight:700;">$1</strong>');
+    return `<p style="color:#ffffff;">${formatted}</p>`;
   })
   .join('');
 ---
@@ -28,7 +28,6 @@ const formattedContent = content
   aria-modal="true"
 >
   <div class="modal-backdrop"></div>
-  
   <div class="modal-panel" style={`background: ${backgroundColor};`}>
     <!-- Close button -->
     <button class="modal-close" aria-label="Close detail view">
@@ -38,9 +37,9 @@ const formattedContent = content
     </button>
 
     <!-- Content -->
-    <div class="modal-content">
-      <h2 class="modal-headline">{headline}</h2>
-      <div class="modal-text" set:html={formattedContent} />
+    <div class="modal-content" style="color: #ffffff;">
+      <h2 class="modal-headline" style="color: #ffffff;">{headline}</h2>
+      <div class="modal-text" style="color: #ffffff;" set:html={formattedContent} />
     </div>
   </div>
 </div>
@@ -119,7 +118,7 @@ const formattedContent = content
   }
 
   .modal-content {
-    color: white;
+    color: #ffffff;
   }
 
   .modal-headline {
@@ -128,19 +127,18 @@ const formattedContent = content
     line-height: 1.1;
     letter-spacing: -0.02em;
     margin: 0 0 32px 0;
-    color: white;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
   }
 
   .modal-text {
     font-size: 19px;
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.95);
-    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    color: #ffffff;
   }
 
   .modal-text :global(p) {
     margin: 0 0 20px 0;
+    color: #ffffff;
   }
 
   .modal-text :global(p:last-child) {
@@ -149,7 +147,7 @@ const formattedContent = content
 
   .modal-text :global(strong) {
     font-weight: 700;
-    color: white;
+    color: #ffffff;
   }
 
   /* Mobile */

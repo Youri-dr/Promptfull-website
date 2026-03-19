@@ -6,7 +6,7 @@
   <div class="pf-nav-inner">
     <!-- Logo/Brand -->
     <a href="/" class="pf-nav-logo">
-      Promptfull
+      <img src="/images/promptfull-logo.svg" alt="Promptfull" height="22" />
     </a>
 
     <!-- Desktop Menu -->
@@ -23,7 +23,6 @@
         </button>
         <ul class="pf-nav-dropdown-menu">
           <li><a href="/about">Our Story</a></li>
-          <li><a href="/team">Team</a></li>
           <li><a href="/contact">Contact</a></li>
         </ul>
       </li>
@@ -38,14 +37,13 @@
   <!-- Mobile Menu -->
   <div class="pf-nav-mobile-menu" aria-hidden="true">
     <ul>
-      <li><a href="/ai-updates">Recent in AI</a></li>
+      <li><a href="/recent-in-ai">Recent in AI</a></li>
       <li><a href="/articles">All Articles</a></li>
       <li><a href="/app">App</a></li>
       <li class="pf-nav-mobile-section">
         <span class="pf-nav-mobile-label">About</span>
         <ul>
           <li><a href="/about">Our Story</a></li>
-          <li><a href="/team">Team</a></li>
           <li><a href="/contact">Contact</a></li>
         </ul>
       </li>
@@ -66,7 +64,7 @@
   }
 
   .pf-nav-inner {
-    max-width: 1060px;
+    max-width: min(1200px, 92vw);
     margin: 0 auto;
     padding: 0 20px;
     height: 48px;
@@ -82,6 +80,13 @@
     letter-spacing: -0.02em;
     color: rgba(20, 20, 22, 0.92);
     text-decoration: none;
+  }
+
+  .pf-nav-logo img {
+    height: 36px;
+    width: auto;
+    display: block;
+    mix-blend-mode: multiply;
   }
 
   /* Desktop Menu */
@@ -124,7 +129,7 @@
     color: rgba(0, 105, 224, 1) !important;
   }
 
-  /* Dropdown - FIXED hover behavior */
+  /* Dropdown */
   .pf-nav-dropdown {
     position: relative;
   }
@@ -150,7 +155,6 @@
     pointer-events: none;
   }
 
-  /* FIXED: Add padding area between button and menu to prevent gap issues */
   .pf-nav-dropdown::before {
     content: '';
     position: absolute;

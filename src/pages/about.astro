@@ -1,0 +1,495 @@
+---
+// src/pages/about.astro
+import PageTemplate from '../layouts/PageTemplate.astro';
+---
+
+<PageTemplate
+  title="About"
+  description="Promptfull explains AI in a structured, human way. Built for anyone who works, learns, or creates in a world shaped by AI."
+  noPadding={true}
+>
+
+  <!-- ─── HERO ─────────────────────────────────────────────────── -->
+  <section class="pf-hero" aria-labelledby="hero-headline">
+    <div class="pf-container pf-container--narrow">
+      <p class="pf-eyebrow">About Promptfull</p>
+      <h1 class="pf-hero-headline" id="hero-headline">
+        AI, explained<br />in a human way.
+      </h1>
+      <p class="pf-hero-sub">
+        Most AI content is either too technical or too shallow.
+        Promptfull exists in the space between — structured thinking,
+        clear language, and concepts that actually stick.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── STATS ─────────────────────────────────────────────────── -->
+  <section class="pf-stats" aria-label="Platform highlights">
+    <div class="pf-container">
+      <dl class="pf-stats-grid">
+
+        <div class="pf-stat-card">
+          <!-- Flag / launch icon -->
+          <div class="pf-stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 2v18M5 3h10l-3 4.5L15 12H5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <dt class="pf-stat-label">Launched</dt>
+          <dd class="pf-stat-value">2026</dd>
+          <dd class="pf-stat-desc">Independent AI Learning Platform</dd>
+        </div>
+
+        <div class="pf-stat-card">
+          <!-- Open book icon -->
+          <div class="pf-stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 5c-1.5-1-3.5-1.5-6-1.5v13c2.5 0 4.5.5 6 1.5m0-13c1.5-1 3.5-1.5 6-1.5v13c-2.5 0-4.5.5-6 1.5m0-13v13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <dt class="pf-stat-label">Content Library</dt>
+          <dd class="pf-stat-value">100+</dd>
+          <dd class="pf-stat-desc">Foundational AI Concepts Explained</dd>
+        </div>
+
+        <div class="pf-stat-card">
+          <!-- Calendar / cadence icon -->
+          <div class="pf-stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3 9h16M7 3v4M15 3v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="11" cy="14" r="1" fill="currentColor"/>
+            </svg>
+          </div>
+          <dt class="pf-stat-label">Cadence</dt>
+          <dd class="pf-stat-value">Weekly</dd>
+          <dd class="pf-stat-desc">New Content Added Consistently</dd>
+        </div>
+
+        <div class="pf-stat-card">
+          <!-- Globe icon -->
+          <div class="pf-stat-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M11 3c-2 2.5-3 5-3 8s1 5.5 3 8M11 3c2 2.5 3 5 3 8s-1 5.5-3 8M3 11h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <dt class="pf-stat-label">Reach</dt>
+          <dd class="pf-stat-value">Global</dd>
+          <dd class="pf-stat-desc">Readers Across Multiple Countries</dd>
+        </div>
+
+      </dl>
+    </div>
+  </section>
+
+  <!-- ─── WHY ───────────────────────────────────────────────────── -->
+  <section class="pf-section" aria-labelledby="why-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">Why Promptfull Exists</p>
+      <h2 class="pf-section-headline" id="why-headline">
+        AI is moving fast.<br />Understanding it shouldn't require a PhD.
+      </h2>
+      <div class="pf-prose">
+        <p>
+          The gap between how AI works and how most people understand it is widening.
+          Not because the concepts are impossible — but because most explanations
+          are written for the wrong audience, in the wrong way.
+        </p>
+        <p class="pf-prose-highlight">
+          Promptfull was built to close that gap. Not by simplifying AI into
+          meaningless headlines, but by explaining it with the structure and
+          clarity it deserves.
+        </p>
+        <p>
+          Whether you use AI daily for work, occasionally for creative projects,
+          or are simply trying to understand what's changing around you —
+          Promptfull gives you a foundation that holds.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MISSION ───────────────────────────────────────────────── -->
+  <section class="pf-section pf-section--alt" aria-labelledby="mission-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">Mission</p>
+      <h2 class="pf-section-headline" id="mission-headline">
+        Build genuine AI literacy —<br />one clear concept at a time.
+      </h2>
+      <div class="pf-prose">
+        <p>
+          Promptfull's mission is to make AI understandable to anyone who takes
+          the time to learn it. Not through shortcuts or hacks —
+          through structured, honest explanation.
+        </p>
+        <p class="pf-prose-highlight">
+          We believe that understanding <em>why</em> something works matters more
+          than knowing <em>that</em> it works. That's the difference between
+          someone who uses AI and someone who thinks with it.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── VISION ────────────────────────────────────────────────── -->
+  <section class="pf-section" aria-labelledby="vision-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">Vision</p>
+      <h2 class="pf-section-headline" id="vision-headline">
+        A world where AI is understood,<br />not just used.
+      </h2>
+      <div class="pf-prose">
+        <p class="pf-prose-highlight">
+          We're building toward a future where AI literacy is as fundamental
+          as reading or writing. Where people can engage with AI tools
+          from a place of understanding — not confusion, not fear,
+          and not blind trust.
+        </p>
+        <p>
+          Promptfull is an early step in that direction.
+          Independent, intentional, and built for the long term.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WORK WITH US ──────────────────────────────────────────── -->
+  <section class="pf-section pf-section--work" aria-labelledby="work-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">Work With Promptfull</p>
+      <h2 class="pf-section-headline pf-section-headline--sm" id="work-headline">
+        Thoughtful collaboration,<br />on the right terms.
+      </h2>
+      <div class="pf-prose">
+        <p>
+          Promptfull is open to working with organizations, tools, and platforms
+          that share a commitment to clear, honest AI communication.
+        </p>
+        <p>
+          If you're interested in content partnerships, editorial collaboration,
+          or reaching an audience that takes AI learning seriously —
+          we'd be glad to hear from you.
+        </p>
+      </div>
+      <a href="/contact" class="pf-cta">Get in touch</a>
+    </div>
+  </section>
+
+</PageTemplate>
+
+<style>
+  /* ─── LOCAL TOKENS ───────────────────────────────────────────── */
+  :root {
+    --pf-about-bg-alt:    #efefed;
+    --pf-about-bg-work:   #eef2f7;
+    --pf-about-border:    rgba(0, 0, 0, 0.07);
+    --pf-about-muted:     rgba(60, 60, 67, 0.6);
+
+    /* Blue accent palette */
+    --pf-blue:            #007AFF;
+    --pf-blue-light:      rgba(0, 122, 255, 0.08);
+    --pf-blue-mid:        rgba(0, 122, 255, 0.14);
+    --pf-blue-strip:      rgba(0, 122, 255, 0.18);
+    --pf-blue-border:     rgba(0, 122, 255, 0.25);
+  }
+
+  /* ─── LAYOUT ─────────────────────────────────────────────────── */
+  .pf-container {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .pf-container--narrow { max-width: 860px; }
+  .pf-container--text   { max-width: 860px; }
+
+  /* ─── EYEBROW ────────────────────────────────────────────────── */
+  .pf-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--pf-about-muted);
+    margin-bottom: 16px;
+  }
+
+  /* ─── HERO ───────────────────────────────────────────────────── */
+  .pf-hero {
+    padding: 96px 24px 80px;
+    text-align: center;
+    background: #F5F5F7;
+  }
+
+  .pf-hero .pf-eyebrow {
+    margin-bottom: 24px;
+    color: var(--pf-blue);
+  }
+
+  .pf-hero-headline {
+    font-size: clamp(40px, 6vw, 68px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .pf-hero-headline em {
+    font-style: normal;
+    color: var(--pf-blue);
+  }
+
+  .pf-hero-sub {
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ─── STATS ──────────────────────────────────────────────────── */
+  .pf-stats {
+    padding: 64px 24px;
+    border-top: 1px solid var(--pf-about-border);
+    border-bottom: 1px solid var(--pf-about-border);
+    background: #F5F5F7;
+  }
+
+  .pf-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--pf-about-border);
+    border: 1px solid var(--pf-about-border);
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .pf-stat-card {
+    background: #F5F5F7;
+    padding: 40px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    transition: background 0.2s ease;
+  }
+
+  .pf-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 24px;
+    right: 24px;
+    height: 2px;
+    background: var(--pf-blue);
+    border-radius: 0 0 2px 2px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .pf-stat-card:hover {
+    background: var(--pf-blue-light);
+  }
+
+  .pf-stat-card:hover::before {
+    opacity: 1;
+  }
+
+  /* ─── STAT ICON ─────────────────────────────────────────────── */
+  .pf-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--pf-blue-light);
+    color: var(--pf-blue);
+    margin: 0 auto 8px;
+    order: 0;
+    transition: background 0.2s ease;
+  }
+
+  .pf-stat-card:hover .pf-stat-icon {
+    background: var(--pf-blue-mid);
+  }
+
+  .pf-stat-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pf-about-muted);
+    order: 1;
+  }
+
+  .pf-stat-value {
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    line-height: 1;
+    order: 2;
+  }
+
+  .pf-stat-desc {
+    font-size: 13px;
+    color: var(--pf-about-muted);
+    line-height: 1.4;
+    order: 3;
+  }
+
+  /* ─── CONTENT SECTIONS ───────────────────────────────────────── */
+  .pf-section {
+    padding: 80px 24px;
+    border-bottom: 1px solid var(--pf-about-border);
+    background: #F5F5F7;
+  }
+
+  .pf-section--alt {
+    background: #2b3057;
+  }
+
+  .pf-section--alt .pf-eyebrow {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .pf-section--alt .pf-eyebrow::before {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .pf-section--alt .pf-section-headline {
+    color: #ffffff;
+  }
+
+  .pf-section--alt .pf-prose p {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .pf-section--alt .pf-prose-highlight {
+    border-left-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .pf-section--alt .pf-prose em {
+    color: #ffffff;
+  }
+
+  .pf-section--work {
+    background: var(--pf-about-bg-work);
+    border-bottom: none;
+    padding-bottom: 96px;
+    border-left: 3px solid var(--pf-blue);
+    padding-left: calc(24px + 20px);
+    margin-left: -3px;
+  }
+
+  .pf-section-headline {
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  .pf-section-headline--sm {
+    font-size: clamp(22px, 3vw, 32px);
+  }
+
+  /* ─── EYEBROW WITH BLUE DOT ──────────────────────────────────── */
+  .pf-section .pf-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pf-section .pf-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--pf-blue);
+    flex-shrink: 0;
+  }
+
+  /* ─── PROSE ──────────────────────────────────────────────────── */
+  .pf-prose {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pf-prose p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+
+  .pf-prose em {
+    font-style: italic;
+    color: var(--text);
+  }
+
+  .pf-prose-highlight {
+    border-left: 3px solid var(--pf-blue);
+    padding-left: 16px;
+    color: var(--text) !important;
+    background: var(--pf-blue-light);
+    border-radius: 0 8px 8px 0;
+    padding-top: 12px;
+    padding-right: 16px;
+    padding-bottom: 12px;
+  }
+
+  /* ─── CTA ────────────────────────────────────────────────────── */
+  .pf-cta {
+    display: inline-block;
+    margin-top: 28px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 122, 255, 0.3);
+    padding-bottom: 2px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  .pf-cta:hover {
+    color: var(--accent-hover);
+    border-color: rgba(0, 105, 217, 0.5);
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .pf-stats-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pf-hero {
+      padding: 64px 20px 48px;
+    }
+
+    .pf-section {
+      padding: 56px 20px;
+    }
+
+    .pf-section--work {
+      border-left: none;
+      border-top: none;
+      padding-left: 20px;
+      margin-left: 0;
+    }
+
+    .pf-stat-card {
+      padding: 32px 20px;
+    }
+  }
+</style>

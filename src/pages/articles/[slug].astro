@@ -2,112 +2,102 @@
 import Layout from "../../layouts/Layout.astro";
 import ArticleDetail from "../../components/ArticleDetail.astro";
 import { getArticles, getArticleBySlug, getRelatedArticles, getImageUrl, formatReadingTime, formatPublishDate } from "../../lib/directus";
-
 // Generate static paths for all articles
 export async function getStaticPaths() {
-  const articles = await getArticles();
-  console.log('📄 Building static paths for articles:', articles.length);
-  console.log('📄 Article slugs:', articles.map(a => a.slug));
-  return articles.map((article) => ({
-    params: { slug: article.slug },
+const articles = await getArticles();
+console.log('📄 Building static paths for articles:', articles.length);
+console.log('📄 Article slugs:', articles.map(a => a.slug));
+return articles.map((article) => ({
+params: { slug: article.slug },
   }));
 }
-
 const { slug } = Astro.params;
-
 // Fetch full article content
 const fullArticle = await getArticleBySlug(slug);
 if (!fullArticle) {
-  return Astro.redirect('/404');
+return Astro.redirect('/404');
 }
-
 // Get related articles
 const relatedArticlesRaw = await getRelatedArticles(fullArticle.category, fullArticle.id, 3);
-
 // Transform article for component
 const article = {
-  id: fullArticle.slug,
-  title: fullArticle.title,
-  subtitle: fullArticle.excerpt,
-  category: fullArticle.category,
-  categoryColorHex: fullArticle.category_color || "#7C5CFF",
-  readTime: formatReadingTime(fullArticle.reading_time),
-  relativeDateLabel: "Recently",
-  publishDate: formatPublishDate(fullArticle.publish_at),
-  imageURL: fullArticle.cover_image ? getImageUrl(fullArticle.cover_image.id, { width: 1200, quality: 85 }) : null,
-  content: fullArticle.content,
-  show_prompt_box: fullArticle.show_prompt_box || false,
-  prompt_content: fullArticle.prompt_content || "",
-  prompt_why_works: fullArticle.prompt_why_works || "",
+id: fullArticle.slug,
+title: fullArticle.title,
+subtitle: fullArticle.excerpt,
+category: fullArticle.category,
+categoryColorHex: fullArticle.category_color || "#7C5CFF",
+readTime: formatReadingTime(fullArticle.reading_time),
+relativeDateLabel: "Recently",
+publishDate: formatPublishDate(fullArticle.publish_at),
+imageURL: fullArticle.cover_image ? getImageUrl(fullArticle.cover_image.id, { width: 1200, quality: 85 }) : null,
+content: fullArticle.content,
+show_prompt_box: fullArticle.show_prompt_box || false,
+prompt_content: fullArticle.prompt_content || "",
+prompt_why_works: fullArticle.prompt_why_works || "",
 };
-
 // Transform related articles
 const relatedArticles = relatedArticlesRaw.map(rel => ({
-  id: rel.slug,
-  title: rel.title,
-  subtitle: rel.excerpt,
-  category: rel.category,
-  categoryColorHex: rel.category_color || "#7C5CFF",
-  readTime: formatReadingTime(rel.reading_time),
-  relativeDateLabel: "Recently",
-  publishDate: formatPublishDate(rel.publish_at),
-  imageURL: rel.cover_image ? getImageUrl(rel.cover_image.id) : null,
-  // ← cover_image passed as UUID so ArticleDetail can build the asset URL
-  cover_image: rel.cover_image?.id ?? null,
-  content: "",
+id: rel.slug,
+title: rel.title,
+subtitle: rel.excerpt,
+category: rel.category,
+categoryColorHex: rel.category_color || "#7C5CFF",
+readTime: formatReadingTime(rel.reading_time),
+relativeDateLabel: "Recently",
+publishDate: formatPublishDate(rel.publish_at),
+imageURL: rel.cover_image ? getImageUrl(rel.cover_image.id) : null,
+// ← cover_image passed as UUID so ArticleDetail can build the asset URL
+cover_image: rel.cover_image?.id ?? null,
+content: "",
 }));
 ---
 <Layout title={`${article.title} — Promptfull`}>
-  <ArticleDetail article={article} relatedArticles={relatedArticles} />
+<ArticleDetail article={article} relatedArticles={relatedArticles} />
 </Layout>
-
 <style is:global>
-  /* Override shell constraints for article pages */
-  .shell:has(.article-layout) {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 52px 0 80px !important;
+/* Override shell constraints for article pages */
+.shell:has(.article-layout) {
+width: 100% !important;
+max-width: 100% !important;
+padding: 52px 0 80px !important;
   }
-
-  /* Desktop: constrain article layout itself */
-  @media (min-width: 821px) {
-    .article-layout {
-      width: min(1200px, 92vw);
-      margin: 0 auto;
-      padding: 0 20px;
-      box-sizing: border-box;
+/* Desktop: constrain article layout itself */
+@media (min-width: 821px) {
+.article-layout {
+width: min(1200px, 92vw);
+margin: 0 auto;
+padding: 0 20px;
+box-sizing: border-box;
     }
   }
-
-  /* Mobile: minimal padding, tight spacing */
-  @media (max-width: 820px) {
-    .shell:has(.article-layout) {
-      padding: 32px 12px 48px 12px !important;
+/* Mobile: minimal padding, tight spacing */
+@media (max-width: 820px) {
+.shell:has(.article-layout) {
+padding: 32px 12px 48px 12px !important;
     }
-    .article-layout {
-      width: 100%;
-      padding: 0;
-      box-sizing: border-box;
-      max-width: 100%;
+.article-layout {
+width: 100%;
+padding: 0;
+box-sizing: border-box;
+max-width: 100%;
     }
-    /* article-main only — do NOT set width on article-rail here,
+/* article-main only — do NOT set width on article-rail here,
        that would override display:none and pull it back into flow */
-    .article-main {
-      width: 100%;
-      max-width: 100%;
+.article-main {
+width: 100%;
+max-width: 100%;
     }
-    .article-rail {
-      display: none !important;
+.article-rail {
+display: none !important;
     }
-    .article-hero {
-      margin-left: 0;
-      margin-right: 0;
+.article-hero {
+margin-left: 0;
+margin-right: 0;
     }
   }
-
-  @media (max-width: 520px) {
-    .shell:has(.article-layout) {
-      padding: 28px 10px 40px 10px !important;
+@media (max-width: 520px) {
+.shell:has(.article-layout) {
+padding: 28px 10px 40px 10px !important;
     }
   }
 </style>

@@ -266,7 +266,7 @@ import TileDetailModal from './TileDetailModal.astro';
   .tile-heading {
     font-size: 20px;
     font-weight: 700;
-    color: white;
+    color: #ffffff !important;
     margin: 0 0 10px 0;
     line-height: 1.3;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -274,10 +274,25 @@ import TileDetailModal from './TileDetailModal.astro';
 
   .tile-description {
     font-size: 15px;
-    color: rgba(255, 255, 255, 0.9);
+    color: #ffffff !important;
     margin: 0;
     line-height: 1.5;
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* ─── Structured tile: dark navy bg needs stronger white ─────── */
+  .tile[data-tile-subject="structured"] .tile-heading {
+    color: #ffffff !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+
+  .tile[data-tile-subject="structured"] .tile-description {
+    color: #ffffff !important;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+  }
+
+  .tile[data-tile-subject="structured"] .tile-icon {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
   }
 
   /* Responsive - Tablet */
@@ -368,17 +383,14 @@ import TileDetailModal from './TileDetailModal.astro';
       const closeBtn = modal.querySelector('.modal-close');
       const backdrop = modal.querySelector('.modal-backdrop');
 
-      // Close on X button
       closeBtn?.addEventListener('click', () => {
         closeModal(modal);
       });
 
-      // Close on backdrop click
       backdrop?.addEventListener('click', () => {
         closeModal(modal);
       });
 
-      // Close on ESC key
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal.classList.contains('active')) {
           closeModal(modal);

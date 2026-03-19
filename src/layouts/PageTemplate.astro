@@ -8,15 +8,16 @@ interface Props {
   title: string;
   description?: string;
   maxWidth?: string;
+  noPadding?: boolean;
 }
 
 const {
   title,
   description = "Promptfull - Master AI prompting naturally",
-  maxWidth = "1200px"
+  maxWidth = "1200px",
+  noPadding = false,
 } = Astro.props;
 ---
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,14 +29,10 @@ const {
 </head>
 <body>
   <Navigation />
-
-  <main class="page-main" style={`--max-width: ${maxWidth}`}>
+  <main class={`page-main${noPadding ? ' page-main--no-padding' : ''}`} style={`--max-width: ${maxWidth}`}>
     <slot />
   </main>
-
   <Footer />
-
-  <!-- Cookie Consent Banner -->
   <CookieConsent />
 </body>
 </html>
@@ -67,9 +64,41 @@ const {
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Page Main */
+  /* Page Main — constrained pages (About, Articles, etc.) */
   .page-main {
     min-height: calc(100vh - 48px);
     background: #F5F5F7;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 52px 20px 80px;
+    box-sizing: border-box;
+  }
+
+  /* Modal panels — override global body color cascade for all text inside */
+  .modal-panel,
+  .modal-panel p,
+  .modal-panel h2,
+  .modal-panel strong {
+    color: #ffffff !important;
+  }
+
+  /* Full-width pages (App, Article detail) — no padding, no max-width */
+  .page-main--no-padding {
+    padding: 0 !important;
+    max-width: 100% !important;
+    min-height: 0 !important;
+    background: transparent !important;
+  }
+
+  @media (max-width: 820px) {
+    .page-main:not(.page-main--no-padding) {
+      padding: 32px 16px 48px;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .page-main:not(.page-main--no-padding) {
+      padding: 28px 12px 40px;
+    }
   }
 </style>
