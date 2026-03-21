@@ -188,14 +188,8 @@ import PageTemplate from '../layouts/PageTemplate.astro';
   }
 
   @keyframes scaleIn {
-    from {
-      transform: scale(0);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
   }
 
   .contact-success h2,
@@ -324,12 +318,8 @@ import PageTemplate from '../layouts/PageTemplate.astro';
   }
 
   @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 
   /* Mobile Styles */
@@ -364,8 +354,9 @@ import PageTemplate from '../layouts/PageTemplate.astro';
 
 <script>
   // Constants
-  const COOLDOWN_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+  const COOLDOWN_DURATION = 5 * 60 * 1000; // 5 minutes
   const COOLDOWN_KEY = 'contact_form_cooldown';
+  const FORMSPREE_URL = 'https://formspree.io/f/xeerwqnv';
 
   // Elements
   const form = document.getElementById('contact-form') as HTMLFormElement;
@@ -377,21 +368,18 @@ import PageTemplate from '../layouts/PageTemplate.astro';
   const buttonLoading = submitButton?.querySelector('.button-loading') as HTMLSpanElement;
 
   // Check cooldown on page load
-  checkCooldown();
+  checkCooldown(); 
 
   // Form submission handler
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     // Hide any previous errors
     errorDiv.style.display = 'none';
 
     // Check honeypot (spam trap)
     const honeypot = (document.getElementById('website') as HTMLInputElement)?.value;
-    if (honeypot) {
-      console.log('Spam detected (honeypot filled)');
-      return; // Silently reject (don't tell spammers)
-    }
+    if (honeypot) return; // Silently reject bots
 
     // Check cooldown
     if (isCooldownActive()) {
@@ -401,17 +389,11 @@ import PageTemplate from '../layouts/PageTemplate.astro';
 
     // Get form data
     const formData = new FormData(form);
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      topic: formData.get('topic'),
-      message: formData.get('message'),
-      timestamp: new Date().toISOString()
-    };
 
     // Validate email format
+    const email = formData.get('email') as string;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(data.email as string)) {
+    if (!emailPattern.test(email)) {
       showError('Please enter a valid email address.');
       return;
     }
@@ -421,32 +403,35 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     buttonText.style.display = 'none';
     buttonLoading.style.display = 'flex';
 
-    // Simulate submission (replace this with actual email service later)
     try {
-      // Log to console for now (you'll replace this with actual API call)
-      console.log('📧 Contact Form Submission:', data);
-      
-      // TODO: Replace with actual email service
-      // Example with Formspree:
-      // const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
-      //   method: 'POST',
-      //   body: JSON.stringify(data),
-      //   headers: { 'Content-Type': 'application/json' }
-      // });
-      
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Submit to Formspree — delivers to contact@promptfull-ai.com
+      const response = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
 
-      // Set cooldown
-      setCooldown();
+      if (response.ok) {
+        // Set cooldown and show success
+        setCooldown();
+        showSuccess();
+      } else {
+        const json = await response.json();
+        const message = json?.errors?.[0]?.message || 'Something went wrong. Please try again.';
+        showError(message);
 
-      // Show success message
-      showSuccess();
+        // Reset button
+        submitButton.disabled = false;
+        buttonText.style.display = 'block';
+        buttonLoading.style.display = 'none';
+      }
 
     } catch (error) {
       console.error('Submission error:', error);
-      showError('Something went wrong. Please try again.');
-      
+      showError('Something went wrong. Please check your connection and try again.');
+
       // Reset button
       submitButton.disabled = false;
       buttonText.style.display = 'block';
@@ -458,16 +443,11 @@ import PageTemplate from '../layouts/PageTemplate.astro';
   function isCooldownActive(): boolean {
     const cooldownEnd = localStorage.getItem(COOLDOWN_KEY);
     if (!cooldownEnd) return false;
-    
-    const now = Date.now();
-    const endTime = parseInt(cooldownEnd);
-    
-    return now < endTime;
+    return Date.now() < parseInt(cooldownEnd);
   }
 
   function setCooldown(): void {
-    const endTime = Date.now() + COOLDOWN_DURATION;
-    localStorage.setItem(COOLDOWN_KEY, endTime.toString());
+    localStorage.setItem(COOLDOWN_KEY, (Date.now() + COOLDOWN_DURATION).toString());
   }
 
   function checkCooldown(): void {
@@ -482,19 +462,17 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     if (!cooldownEnd) return;
 
     const interval = setInterval(() => {
-      const now = Date.now();
-      const endTime = parseInt(cooldownEnd);
-      const remaining = endTime - now;
+      const remaining = parseInt(cooldownEnd) - Date.now();
 
       if (remaining <= 0) {
         clearInterval(interval);
-        location.reload(); // Refresh to show form again
+        location.reload();
         return;
       }
 
       const minutes = Math.floor(remaining / 60000);
       const seconds = Math.floor((remaining % 60000) / 1000);
-      
+
       const timeElement = document.getElementById('cooldown-time');
       if (timeElement) {
         timeElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
@@ -516,8 +494,6 @@ import PageTemplate from '../layouts/PageTemplate.astro';
   function showError(message: string): void {
     errorDiv.textContent = message;
     errorDiv.style.display = 'block';
-    
-    // Scroll to error
     errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 </script>
