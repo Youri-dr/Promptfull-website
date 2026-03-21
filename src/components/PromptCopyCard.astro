@@ -11,6 +11,10 @@ const {
   whyWorks
 } = Astro.props;
 
+const MAX_CHARS = 280;
+const isTruncated = prompt.length > MAX_CHARS;
+const truncatedPrompt = isTruncated ? prompt.slice(0, MAX_CHARS) + '...' : prompt;
+
 // Parse why it works into array (split by newlines)
 const whyWorksArray = whyWorks 
   ? whyWorks.split('\n').map(line => line.trim()).filter(line => line.length > 0)
@@ -29,7 +33,18 @@ const whyWorksArray = whyWorks
   </div>
 
   <!-- Terminal-style prompt content -->
-  <pre class="prompt-text">{prompt}</pre>
+  <div class="prompt-content">
+    <pre class="prompt-text" data-full-text={prompt}>{truncatedPrompt}</pre>
+
+    {isTruncated && (
+      <button class="read-more-button" aria-label="Show full prompt">
+        <span class="read-more-text">Read more</span>
+        <svg class="read-more-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    )}
+  </div>
 
   <!-- Why it works section (if provided) -->
   {whyWorksArray.length > 0 && (
@@ -59,7 +74,7 @@ const whyWorksArray = whyWorks
     position: relative;
     padding: 20px;
     border-radius: 20px;
-    background: #1e1e1e; /* ✅ Dark terminal background */
+    background: #1e1e1e;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
@@ -75,7 +90,7 @@ const whyWorksArray = whyWorks
     font-size: 15px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: rgba(255, 255, 255, 0.9); /* ✅ Light text on dark bg */
+    color: rgba(255, 255, 255, 0.9);
     margin: 0;
   }
 
@@ -102,25 +117,64 @@ const whyWorksArray = whyWorks
     transform: scale(0.95);
   }
 
-  /* ✅ Terminal-style prompt text */
+  .prompt-content {
+    position: relative;
+  }
+
   .prompt-text {
     font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
-    font-size: 15px; /* ✅ Slightly larger */
-    line-height: 1.6; /* ✅ More breathing room */
-    color: #d4d4d4; /* ✅ Terminal text color (VS Code default) */
-    background: transparent;
-    margin: 0 0 20px 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #d4d4d4;
+    background: rgba(0, 0, 0, 0.2);
+    margin: 0 0 0 0;
     white-space: pre-wrap;
     word-break: break-word;
     padding: 16px;
     border-radius: 12px;
-    background: rgba(0, 0, 0, 0.2); /* ✅ Slightly darker area for prompt */
   }
 
-  /* ✅ Why it works section */
+  .read-more-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .read-more-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .read-more-button:active {
+    transform: scale(0.98);
+  }
+
+  .read-more-icon {
+    transition: transform 0.3s ease;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .read-more-button.expanded .read-more-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Why it works section */
   .why-works-section {
     padding-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 16px;
   }
 
   .why-works-title {
@@ -161,7 +215,7 @@ const whyWorksArray = whyWorks
     pointer-events: none;
     opacity: 0;
     z-index: 10;
-    background: rgba(30, 30, 30, 0.95); /* ✅ Dark overlay */
+    background: rgba(30, 30, 30, 0.95);
   }
 
   .copied-overlay.show {
@@ -205,28 +259,14 @@ const whyWorksArray = whyWorks
   }
 
   @keyframes glowPulse {
-    0% { 
-      transform: scale(1); 
-      opacity: 0.7; 
-    }
-    100% { 
-      transform: scale(1.6); 
-      opacity: 0; 
-    }
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.6); opacity: 0; }
   }
 
   @keyframes spring {
-    0% { 
-      transform: scale(0.8); 
-      opacity: 0; 
-    }
-    50% { 
-      transform: scale(1.1); 
-    }
-    100% { 
-      transform: scale(1); 
-      opacity: 1; 
-    }
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
   }
 
   /* Mobile adjustments */
@@ -257,24 +297,46 @@ const whyWorksArray = whyWorks
     cards.forEach(card => {
       const copyButton = card.querySelector('.copy-button');
       const overlay = card.querySelector('.copied-overlay');
-      
+      const readMoreButton = card.querySelector('.read-more-button');
+      const promptTextEl = card.querySelector('.prompt-text') as HTMLElement | null;
+
+      // Copy full prompt (always uses data-prompt on the card)
       copyButton?.addEventListener('click', async () => {
-        const promptText = card.getAttribute('data-prompt');
-        if (!promptText || !overlay) return;
+        const fullPrompt = card.getAttribute('data-prompt');
+        if (!fullPrompt || !overlay) return;
 
         try {
-          await navigator.clipboard.writeText(promptText);
+          await navigator.clipboard.writeText(fullPrompt);
           
-          // Show feedback
           overlay.classList.add('show');
-          
-          // Remove after animation
           setTimeout(() => {
             overlay.classList.remove('show');
           }, 1200);
 
         } catch (err) {
           console.error('Failed to copy:', err);
+        }
+      });
+
+      // Read more / Read less toggle
+      readMoreButton?.addEventListener('click', () => {
+        if (!promptTextEl || !readMoreButton) return;
+
+        const isExpanded = readMoreButton.classList.contains('expanded');
+        const fullText = promptTextEl.getAttribute('data-full-text') || '';
+        const truncatedText = fullText.slice(0, 280) + '...';
+        const readMoreText = readMoreButton.querySelector('.read-more-text');
+
+        if (isExpanded) {
+          // Collapse
+          promptTextEl.textContent = truncatedText;
+          readMoreButton.classList.remove('expanded');
+          if (readMoreText) readMoreText.textContent = 'Read more';
+        } else {
+          // Expand
+          promptTextEl.textContent = fullText;
+          readMoreButton.classList.add('expanded');
+          if (readMoreText) readMoreText.textContent = 'Read less';
         }
       });
     });

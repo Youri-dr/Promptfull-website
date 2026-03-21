@@ -272,7 +272,7 @@ import PageTemplate from '../layouts/PageTemplate.astro';
 
       <section class="cookies-section">
         <h2>7. Cookies and Children</h2>
-        <p>Our Services are not directed at children under 13, and we do not knowingly collect information from children through cookies. If you believe a child has provided us with information through cookies, please contact us at <a href="mailto:privacy@promptfull.com">privacy@promptfull.com</a>.</p>
+        <p>Our Services are not directed at children under 13, and we do not knowingly collect information from children through cookies. If you believe a child has provided us with information through cookies, please contact us at <a href="mailto:privacy@promptfull-ai.com">privacy@promptfull-ai.com</a>.</p>
       </section>
 
       <section class="cookies-section">
@@ -290,8 +290,8 @@ import PageTemplate from '../layouts/PageTemplate.astro';
         <h2>9. Contact Us</h2>
         <p>If you have questions about this Cookie Policy or our use of cookies, please contact us:</p>
         <div class="contact-info">
-          <p><strong>Email:</strong> <a href="mailto:privacy@promptfull.com">privacy@promptfull.com</a></p>
-          <p><strong>Privacy Team:</strong> <a href="mailto:dpo@promptfull.com">dpo@promptfull.com</a></p>
+          <p><strong>Email:</strong> <a href="mailto:privacy@promptfull-ai.com">privacy@promptfull-ai.com</a></p>
+          <p><strong>Privacy Team:</strong> <a href="mailto:privacy@promptfull-ai.com">privacy@promptfull-ai.com</a></p>
           <p><strong>Website:</strong> <a href="/contact">promptfull.com/contact</a></p>
         </div>
       </section>
@@ -348,17 +348,10 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     color: rgba(60, 60, 67, 0.85);
   }
 
-  .cookies-intro p:last-child {
-    margin-bottom: 0;
-  }
+  .cookies-intro p:last-child { margin-bottom: 0; }
 
-  .cookies-section {
-    margin-bottom: 48px;
-  }
-
-  .cookies-section:last-child {
-    margin-bottom: 0;
-  }
+  .cookies-section { margin-bottom: 48px; }
+  .cookies-section:last-child { margin-bottom: 0; }
 
   .cookies-section h2 {
     font-size: 28px;
@@ -405,11 +398,7 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     text-decoration: underline;
   }
 
-  /* Cookie Tables */
-  .cookie-table {
-    margin: 20px 0;
-    overflow-x: auto;
-  }
+  .cookie-table { margin: 20px 0; overflow-x: auto; }
 
   .cookie-table table {
     width: 100%;
@@ -436,15 +425,9 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
-  .cookie-table tr:last-child td {
-    border-bottom: none;
-  }
+  .cookie-table tr:last-child td { border-bottom: none; }
+  .cookie-table tbody tr:hover { background: rgba(0, 122, 255, 0.02); }
 
-  .cookie-table tbody tr:hover {
-    background: rgba(0, 122, 255, 0.02);
-  }
-
-  /* Contact Info */
   .contact-info {
     background: #F5F5F7;
     padding: 20px;
@@ -452,15 +435,9 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     margin: 16px 0;
   }
 
-  .contact-info p {
-    margin: 0 0 8px 0;
-  }
+  .contact-info p { margin: 0 0 8px 0; }
+  .contact-info p:last-child { margin-bottom: 0; }
 
-  .contact-info p:last-child {
-    margin-bottom: 0;
-  }
-
-  /* Warning Box */
   .warning-box {
     background: rgba(255, 149, 0, 0.08);
     border-left: 3px solid #FF9500;
@@ -476,11 +453,7 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     color: rgba(60, 60, 67, 0.9);
   }
 
-  /* Cookie Preferences Link */
-  .cookie-preferences-link {
-    margin: 20px 0;
-    text-align: center;
-  }
+  .cookie-preferences-link { margin: 20px 0; text-align: center; }
 
   .manage-cookies-btn {
     background: #007AFF;
@@ -501,7 +474,6 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
   }
 
-  /* Acknowledgment Box */
   .cookies-acknowledgment {
     margin-top: 48px;
     padding: 24px;
@@ -518,56 +490,20 @@ import PageTemplate from '../layouts/PageTemplate.astro';
     color: #1D1D1F;
   }
 
-  /* Mobile */
   @media (max-width: 768px) {
-    .cookies-page {
-      padding: 40px 20px 60px;
-    }
-
-    .cookies-container {
-      padding: 32px 24px;
-      border-radius: 12px;
-    }
-
-    .cookies-container h1 {
-      font-size: 36px;
-    }
-
-    .cookies-section h2 {
-      font-size: 24px;
-    }
-
-    .cookies-section h3 {
-      font-size: 18px;
-    }
-
-    .cookies-section p,
-    .cookies-section li {
-      font-size: 15px;
-    }
-
-    .cookie-table {
-      font-size: 13px;
-    }
-
-    .cookie-table th,
-    .cookie-table td {
-      padding: 10px 12px;
-      font-size: 13px;
-    }
+    .cookies-page { padding: 40px 20px 60px; }
+    .cookies-container { padding: 32px 24px; border-radius: 12px; }
+    .cookies-container h1 { font-size: 36px; }
+    .cookies-section h2 { font-size: 24px; }
+    .cookies-section h3 { font-size: 18px; }
+    .cookies-section p, .cookies-section li { font-size: 15px; }
+    .cookie-table { font-size: 13px; }
+    .cookie-table th, .cookie-table td { padding: 10px 12px; font-size: 13px; }
   }
 </style>
 
 <script>
   function openCookiePreferences() {
-    // This would open your cookie consent banner/modal
-    // For now, just an alert
     alert('Cookie Preference Center will be implemented here. This would open a modal where users can accept/reject different cookie categories.');
-    
-    // In production, you would integrate with a cookie consent solution like:
-    // - OneTrust
-    // - Cookiebot
-    // - Osano
-    // - Or build your own preference center
   }
 </script>

@@ -17,15 +17,15 @@ import TileDetailModal from './TileDetailModal.astro';
     <div class="story-section">
       <p class="story-eyebrow">Why Promptfull exists</p>
       <h1 class="story-headline">
-        AI is powerful.<br/>
-        Learning it shouldn't feel like work.
+        <span class="headline-primary">Know the why.</span>
+        <span class="headline-secondary">Master AI.</span>
       </h1>
       <p class="story-paragraph">
         Promptfull helps you create better prompts without shortcuts or tricks.
         By understanding why prompts work,
         better results come naturally.
       </p>
-      <p class="story-trust">Join 1,000+ people learning AI the human way</p>
+      <p class="story-trust">Join 1.000+ people learning AI the human way!</p>
     </div>
 
     <!-- Approach Label -->
@@ -68,7 +68,7 @@ import TileDetailModal from './TileDetailModal.astro';
 
 <style>
 
- /* Story Section */
+  /* Story Section */
   .story-section {
     max-width: 800px;
     margin: 0 auto 80px;
@@ -91,6 +91,19 @@ import TileDetailModal from './TileDetailModal.astro';
     letter-spacing: -0.02em;
     color: #1F2937;
     margin: 0 0 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* Both lines identical — same size, same weight, same color */
+  .headline-primary,
+  .headline-secondary {
+    display: block;
+    font-size: 48px;
+    font-weight: 800;
+    color: #1F2937;
+    line-height: 1.1;
   }
 
   .story-paragraph {
@@ -159,19 +172,37 @@ import TileDetailModal from './TileDetailModal.astro';
       max-width: 100%;
     }
 
+    .story-eyebrow {
+      margin-bottom: 16px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+    }
+
     .story-headline {
       font-size: 34px;
       margin-bottom: 20px;
+      gap: 4px;
+    }
+
+    /* Both lines identical on mobile */
+    .headline-primary,
+    .headline-secondary {
+      font-size: 34px;
+      font-weight: 800;
+      color: #1F2937;
+      line-height: 1.1;
     }
 
     .story-paragraph {
-      font-size: 17px;
+      font-size: 16px;
       line-height: 1.7;
       margin-bottom: 18px;
+      color: #4B5563;
     }
 
     .story-trust {
       font-size: 13px;
+      white-space: nowrap;
     }
 
     .approach-label {
@@ -202,11 +233,12 @@ import TileDetailModal from './TileDetailModal.astro';
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
+    align-items: stretch; /* FIX: all tiles same height */
   }
 
   .tile {
     border-radius: 24px;
-    padding: 36px 28px;
+    padding: 40px 28px 36px; /* FIX: fixed top padding — icons always start at same height */
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -214,7 +246,7 @@ import TileDetailModal from './TileDetailModal.astro';
     overflow: hidden;
     min-height: 220px;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* FIX: was center — anchors content to top */
     justify-content: center;
   }
 
@@ -245,6 +277,7 @@ import TileDetailModal from './TileDetailModal.astro';
     text-align: center;
     position: relative;
     z-index: 1;
+    width: 100%; /* FIX: fills tile width evenly */
   }
 
   .tile-icon {

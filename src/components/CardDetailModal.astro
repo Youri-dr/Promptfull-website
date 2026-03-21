@@ -40,6 +40,11 @@ function formatLikes(likes: number): string {
 }
 
 const formattedLikes = formatLikes(card.likes);
+
+// Truncation
+const MAX_CHARS = 280;
+const isTruncated = card.examplePrompt && card.examplePrompt.length > MAX_CHARS;
+const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '...' : card.examplePrompt;
 ---
 
 <div class="card-modal" data-card-id={card.id}>
@@ -101,9 +106,10 @@ const formattedLikes = formatLikes(card.likes);
             </div>
 
             <div class="prompt-content">
-              <pre class="prompt-text" data-full-text={card.examplePrompt}>{card.examplePrompt.length > 280 ? card.examplePrompt.slice(0, 280) + '...' : card.examplePrompt}</pre>
+              <!-- FIX: renamed variable to promptTextEl to avoid conflict with JS scope -->
+              <pre class="prompt-text" data-full-text={card.examplePrompt}>{truncatedPrompt}</pre>
               
-              {card.examplePrompt.length > 280 && (
+              {isTruncated && (
                 <button class="read-more-button" aria-label="Show full prompt">
                   <span class="read-more-text">Read more</span>
                   <svg class="read-more-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -206,14 +212,8 @@ const formattedLikes = formatLikes(card.likes);
   }
 
   @keyframes scaleIn {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
   }
 
   /* Card */
@@ -233,23 +233,10 @@ const formattedLikes = formatLikes(card.likes);
   }
 
   /* Custom scrollbar */
-  .modal-card::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .modal-card::-webkit-scrollbar-track {
-    background: transparent;
-    margin: 20px 0;
-  }
-
-  .modal-card::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
-  }
-
-  .modal-card::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.25);
-  }
+  .modal-card::-webkit-scrollbar { width: 8px; }
+  .modal-card::-webkit-scrollbar-track { background: transparent; margin: 20px 0; }
+  .modal-card::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 4px; }
+  .modal-card::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.25); }
 
   /* Close button */
   .close-button {
@@ -270,26 +257,18 @@ const formattedLikes = formatLikes(card.likes);
     z-index: 10;
   }
 
-  .close-button:hover {
-    background: rgba(0, 0, 0, 0.1);
-    transform: scale(1.05);
-  }
-
-  .close-button:active {
-    transform: scale(0.95);
-  }
+  .close-button:hover { background: rgba(0, 0, 0, 0.1); transform: scale(1.05); }
+  .close-button:active { transform: scale(0.95); }
 
   /* Header */
-  .card-header {
-    margin-bottom: 32px;
-  }
+  .card-header { margin-bottom: 32px; }
 
   .header-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 16px;
-    padding-right: 48px; /* ✅ FIXED: Add padding to avoid close button overlap */
+    padding-right: 48px;
   }
 
   .category-pill {
@@ -315,14 +294,8 @@ const formattedLikes = formatLikes(card.likes);
     color: rgba(60, 60, 67, 0.6);
   }
 
-  .likes-badge svg {
-    color: rgba(60, 60, 67, 0.4);
-    flex-shrink: 0;
-  }
-
-  .likes-count {
-    font-variant-numeric: tabular-nums;
-  }
+  .likes-badge svg { color: rgba(60, 60, 67, 0.4); flex-shrink: 0; }
+  .likes-count { font-variant-numeric: tabular-nums; }
 
   .card-title {
     font-size: 36px;
@@ -347,10 +320,7 @@ const formattedLikes = formatLikes(card.likes);
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
 
-  .detail-section:last-of-type {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
+  .detail-section:last-of-type { border-bottom: none; padding-bottom: 0; }
 
   .section-title {
     font-size: 21px;
@@ -367,14 +337,8 @@ const formattedLikes = formatLikes(card.likes);
     margin: 0 0 12px 0;
   }
 
-  .section-text:last-child {
-    margin-bottom: 0;
-  }
-
-  .section-text.secondary {
-    color: var(--text-secondary);
-    font-size: 16px;
-  }
+  .section-text:last-child { margin-bottom: 0; }
+  .section-text.secondary { color: var(--text-secondary); font-size: 16px; }
 
   /* Prompt copy card */
   .prompt-copy-card {
@@ -415,18 +379,10 @@ const formattedLikes = formatLikes(card.likes);
     border: none;
   }
 
-  .copy-button:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.9);
-  }
+  .copy-button:hover { background: rgba(255, 255, 255, 0.12); color: rgba(255, 255, 255, 0.9); }
+  .copy-button:active { transform: scale(0.95); }
 
-  .copy-button:active {
-    transform: scale(0.95);
-  }
-
-  .prompt-content {
-    position: relative;
-  }
+  .prompt-content { position: relative; }
 
   .prompt-text {
     font-family: 'SF Mono', 'Monaco', 'Menlo', 'Consolas', 'Courier New', monospace;
@@ -437,7 +393,6 @@ const formattedLikes = formatLikes(card.likes);
     margin: 0;
     white-space: pre-wrap;
     word-break: break-word;
-    transition: max-height 0.3s ease;
     padding: 16px;
     border-radius: 12px;
   }
@@ -460,27 +415,15 @@ const formattedLikes = formatLikes(card.likes);
     transition: all 0.2s ease;
   }
 
-  .read-more-button:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .read-more-button:active {
-    transform: scale(0.98);
-  }
+  .read-more-button:hover { background: rgba(255, 255, 255, 0.12); color: rgba(255, 255, 255, 0.9); }
+  .read-more-button:active { transform: scale(0.98); }
 
   .read-more-icon {
     transition: transform 0.3s ease;
     color: rgba(255, 255, 255, 0.6);
   }
 
-  .read-more-button.expanded .read-more-icon {
-    transform: rotate(180deg);
-  }
-
-  .read-more-button.expanded .read-more-text::after {
-    content: ' less';
-  }
+  .read-more-button.expanded .read-more-icon { transform: rotate(180deg); }
 
   /* Copied feedback overlay */
   .copied-overlay {
@@ -513,9 +456,7 @@ const formattedLikes = formatLikes(card.likes);
     opacity: 0.7;
   }
 
-  .copied-overlay.show .glow-ring {
-    animation: glowPulse 0.8s ease-out forwards;
-  }
+  .copied-overlay.show .glow-ring { animation: glowPulse 0.8s ease-out forwards; }
 
   .checkmark-circle {
     display: flex;
@@ -540,28 +481,14 @@ const formattedLikes = formatLikes(card.likes);
   }
 
   @keyframes glowPulse {
-    0% { 
-      transform: scale(1); 
-      opacity: 0.7; 
-    }
-    100% { 
-      transform: scale(1.6); 
-      opacity: 0; 
-    }
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.6); opacity: 0; }
   }
 
   @keyframes spring {
-    0% { 
-      transform: scale(0.8); 
-      opacity: 0; 
-    }
-    50% { 
-      transform: scale(1.1); 
-    }
-    100% { 
-      transform: scale(1); 
-      opacity: 1; 
-    }
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
   }
 
   /* Tips list */
@@ -603,37 +530,15 @@ const formattedLikes = formatLikes(card.likes);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .like-button {
-    background: rgba(255, 149, 0, 0.15);
-    color: #FF8C00;
-  }
+  .like-button { background: rgba(255, 149, 0, 0.15); color: #FF8C00; }
+  .like-button:hover { background: rgba(255, 149, 0, 0.25); transform: translateY(-1px); }
+  .like-button svg { flex-shrink: 0; }
 
-  .like-button:hover {
-    background: rgba(255, 149, 0, 0.25);
-    transform: translateY(-1px);
-  }
+  .share-button { background: rgba(0, 122, 255, 1); color: white; }
+  .share-button:hover { background: rgba(0, 105, 224, 1); transform: translateY(-1px); }
+  .share-button svg { flex-shrink: 0; }
 
-  .like-button svg {
-    flex-shrink: 0;
-  }
-
-  .share-button {
-    background: rgba(0, 122, 255, 1);
-    color: white;
-  }
-
-  .share-button:hover {
-    background: rgba(0, 105, 224, 1);
-    transform: translateY(-1px);
-  }
-
-  .share-button svg {
-    flex-shrink: 0;
-  }
-
-  .action-button:active {
-    transform: translateY(0);
-  }
+  .action-button:active { transform: translateY(0); }
 
   /* Toast notification */
   .toast {
@@ -652,70 +557,26 @@ const formattedLikes = formatLikes(card.likes);
     transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .toast.show {
-    bottom: 32px;
-  }
+  .toast.show { bottom: 32px; }
 
   /* Mobile adjustments */
   @media (max-width: 820px) {
-    .modal-card {
-      padding: 24px;
-      border-radius: 24px;
-    }
-
-    .close-button {
-      top: 16px;
-      right: 16px;
-    }
-
-    .header-top {
-      padding-right: 44px; /* Adjust for mobile close button position */
-    }
-
-    .card-title {
-      font-size: 28px;
-    }
-
-    .card-subtitle {
-      font-size: 17px;
-    }
-
-    .section-title, .prompt-title {
-      font-size: 19px;
-    }
-
-    .section-text {
-      font-size: 16px;
-    }
-
-    .prompt-copy-card {
-      padding: 16px;
-    }
-
-    .prompt-text {
-      font-size: 14px;
-      padding: 12px;
-    }
+    .modal-card { padding: 24px; border-radius: 24px; }
+    .close-button { top: 16px; right: 16px; }
+    .header-top { padding-right: 44px; }
+    .card-title { font-size: 28px; }
+    .card-subtitle { font-size: 17px; }
+    .section-title, .prompt-title { font-size: 19px; }
+    .section-text { font-size: 16px; }
+    .prompt-copy-card { padding: 16px; }
+    .prompt-text { font-size: 14px; padding: 12px; }
   }
 
   @media (max-width: 520px) {
-    .modal-container {
-      max-height: 95vh;
-    }
-
-    .modal-card {
-      padding: 20px;
-      max-height: 95vh;
-    }
-
-    .card-title {
-      font-size: 24px;
-    }
-
-    .action-button {
-      font-size: 15px;
-      padding: 12px 20px;
-    }
+    .modal-container { max-height: 95vh; }
+    .modal-card { padding: 20px; max-height: 95vh; }
+    .card-title { font-size: 24px; }
+    .action-button { font-size: 15px; padding: 12px 20px; }
   }
 </style>
 
@@ -730,15 +591,14 @@ const formattedLikes = formatLikes(card.likes);
     const copyButton = promptCard?.querySelector('.copy-button');
     const overlay = promptCard?.querySelector('.copied-overlay');
     const readMoreButton = promptCard?.querySelector('.read-more-button');
-    const promptText = promptCard?.querySelector('.prompt-text');
+    // FIX: renamed to promptTextEl to avoid conflict with copy handler variable
+    const promptTextEl = promptCard?.querySelector('.prompt-text') as HTMLElement | null;
     const actionButtons = modal.querySelectorAll('.action-button');
     const toast = modal.querySelector('.toast');
     const toastText = toast?.querySelector('.toast-text');
 
-    // ✅ FIXED: Lock scroll when modal opens
+    // Lock scroll when modal opens
     const scrollY = window.scrollY;
-
-    // Lock scroll
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.top = `-${scrollY}px`;
@@ -748,7 +608,6 @@ const formattedLikes = formatLikes(card.likes);
 
     // Close modal
     const closeModal = () => {
-      // ✅ FIXED: Restore scroll position
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';
@@ -756,69 +615,61 @@ const formattedLikes = formatLikes(card.likes);
       document.body.style.left = '';
       document.body.style.right = '';
       window.scrollTo(0, scrollY);
-
       window.history.back();
     };
 
     closeButton?.addEventListener('click', closeModal);
     backdrop?.addEventListener('click', closeModal);
-
-    // ESC key to close
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeModal();
     });
 
-    // Copy prompt
+    // Copy full prompt — uses data-prompt on the card, never the truncated display text
     copyButton?.addEventListener('click', async () => {
-      const promptText = promptCard?.getAttribute('data-prompt');
-      if (!promptText || !overlay) return;
+      const fullPrompt = promptCard?.getAttribute('data-prompt');
+      if (!fullPrompt || !overlay) return;
 
       try {
-        await navigator.clipboard.writeText(promptText);
-        
+        await navigator.clipboard.writeText(fullPrompt);
         overlay.classList.add('show');
-        
         setTimeout(() => {
           overlay.classList.remove('show');
         }, 1200);
-
       } catch (err) {
         console.error('Failed to copy:', err);
       }
     });
 
-    // Read more toggle
+    // Read more / Read less toggle
+    // FIX: uses promptTextEl (not promptText) to avoid variable name conflict
+    // FIX: "Read less" text was previously set to just "Read" — now correct
     readMoreButton?.addEventListener('click', () => {
-      if (!promptText || !readMoreButton) return;
+      if (!promptTextEl || !readMoreButton) return;
 
       const isExpanded = readMoreButton.classList.contains('expanded');
-      const fullText = promptText.getAttribute('data-full-text');
-      const truncatedText = fullText ? fullText.slice(0, 280) + '...' : '';
+      const fullText = promptTextEl.getAttribute('data-full-text') || '';
+      const truncatedText = fullText.slice(0, 280) + '...';
+      const readMoreText = readMoreButton.querySelector('.read-more-text');
 
       if (isExpanded) {
         // Collapse
-        promptText.textContent = truncatedText;
+        promptTextEl.textContent = truncatedText;
         readMoreButton.classList.remove('expanded');
-        const readMoreText = readMoreButton.querySelector('.read-more-text');
         if (readMoreText) readMoreText.textContent = 'Read more';
       } else {
         // Expand
-        if (fullText) {
-          promptText.textContent = fullText;
-        }
+        promptTextEl.textContent = fullText;
         readMoreButton.classList.add('expanded');
-        const readMoreText = readMoreButton.querySelector('.read-more-text');
-        if (readMoreText) readMoreText.textContent = 'Read';
+        // FIX: was 'Read' — now correctly 'Read less'
+        if (readMoreText) readMoreText.textContent = 'Read less';
       }
     });
 
     // Show toast for like/share
     const showToast = (message: string) => {
       if (!toast || !toastText) return;
-      
       toastText.textContent = message;
       toast.classList.add('show');
-      
       setTimeout(() => {
         toast.classList.remove('show');
       }, 3000);
@@ -827,12 +678,8 @@ const formattedLikes = formatLikes(card.likes);
     actionButtons?.forEach((button) => {
       button.addEventListener('click', () => {
         const htmlButton = button as HTMLElement;
-        
         htmlButton.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-          htmlButton.style.transform = '';
-        }, 150);
-
+        setTimeout(() => { htmlButton.style.transform = ''; }, 150);
         setTimeout(() => {
           showToast('Install the Promptfull app to like cards and save favorites');
         }, 200);

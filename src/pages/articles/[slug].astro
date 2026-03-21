@@ -27,7 +27,7 @@ subtitle: fullArticle.excerpt,
 category: fullArticle.category,
 categoryColorHex: fullArticle.category_color || "#7C5CFF",
 readTime: formatReadingTime(fullArticle.reading_time),
-relativeDateLabel: "Recently",
+relativeDateLabel: formatPublishDate(fullArticle.publish_at), // FIX: was "Recently"
 publishDate: formatPublishDate(fullArticle.publish_at),
 imageURL: fullArticle.cover_image ? getImageUrl(fullArticle.cover_image.id, { width: 1200, quality: 85 }) : null,
 content: fullArticle.content,
@@ -43,7 +43,7 @@ subtitle: rel.excerpt,
 category: rel.category,
 categoryColorHex: rel.category_color || "#7C5CFF",
 readTime: formatReadingTime(rel.reading_time),
-relativeDateLabel: "Recently",
+relativeDateLabel: formatPublishDate(rel.publish_at), // FIX: was "Recently"
 publishDate: formatPublishDate(rel.publish_at),
 imageURL: rel.cover_image ? getImageUrl(rel.cover_image.id) : null,
 // ← cover_image passed as UUID so ArticleDetail can build the asset URL
