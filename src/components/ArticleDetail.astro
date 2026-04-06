@@ -58,12 +58,14 @@ const sponsoredContent = {
   <article class="article-main">
 
     <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/" class="back-link">
+      <!-- Smart back button: uses history.back() to preserve scroll position.
+           Label updates via JS based on where the user came from. -->
+      <button class="back-link" id="back-button" type="button">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M19 12H5m7 7l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span>Back to Home</span>
-      </a>
+        <span id="back-label">Back</span>
+      </button>
     </nav>
 
     <header class="article-header">
@@ -185,6 +187,35 @@ const sponsoredContent = {
 
 </div>
 
+<script>
+  const button = document.getElementById('back-button');
+  const label  = document.getElementById('back-label');
+
+  if (button && label) {
+    // Check where the user came from
+    const referrer = document.referrer;
+    const fromArticles = referrer.includes('/articles');
+    const fromHome = !referrer || referrer === window.location.origin + '/' || referrer === window.location.origin;
+
+    // Set the correct label
+    if (fromArticles) {
+      label.textContent = 'Back to Articles';
+    } else {
+      label.textContent = 'Back to Home';
+    }
+
+    // Navigate back — preserves scroll position on the previous page
+    button.addEventListener('click', () => {
+      if (fromHome || fromArticles) {
+        history.back();
+      } else {
+        // Fallback for direct visits (e.g. shared links, new tab)
+        window.location.href = '/';
+      }
+    });
+  }
+</script>
+
 <style>
   /* ── Desktop: two-column grid ─────────────────────────────────────── */
   .article-layout {
@@ -230,6 +261,11 @@ const sponsoredContent = {
     font-weight: 500;
     color: var(--accent);
     transition: opacity 0.2s ease;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
   }
   .back-link:hover { opacity: 0.7; }
 
@@ -259,13 +295,13 @@ const sponsoredContent = {
   }
 
   .article-subtitle {
-  font-size: 21px;
-  line-height: 1.4;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin: 0 0 24px 0;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--glass-border);
+    font-size: 21px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin: 0 0 24px 0;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--glass-border);
   }
 
   .article-meta {

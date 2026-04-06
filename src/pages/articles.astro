@@ -14,7 +14,7 @@ const transformedArticles = allArticles.map(article => ({
   category: article.category,
   categoryColorHex: article.category_color || "#7C5CFF",
   readTime: formatReadingTime(article.reading_time),
-  relativeDateLabel: "Recently",
+  relativeDateLabel: formatPublishDate(article.publish_at),
   publishDate: formatPublishDate(article.publish_at),
   imageURL: article.cover_image ? getImageUrl(article.cover_image.id) : null,
 }));
