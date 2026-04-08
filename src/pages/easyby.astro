@@ -1,0 +1,353 @@
+---
+import PageTemplate from "../layouts/PageTemplate.astro";
+---
+
+<PageTemplate
+  title="Who is EasyBY? — Promptfull"
+  description="Promptfull is a product by EasyBY V.O.F., a small Dutch company founded by Bram and Youri."
+  noPadding={true}
+>
+
+  <!-- ─── HERO ─────────────────────────────────────────────────── -->
+  <section class="pf-hero" aria-labelledby="hero-headline">
+    <div class="pf-container pf-container--narrow">
+      <p class="pf-eyebrow">Behind Promptfull</p>
+      <h1 class="pf-hero-headline" id="hero-headline">
+        Meet <em>Easy</em>BY.
+      </h1>
+      <p class="pf-hero-sub">
+        Promptfull is built by EasyBY, a small company from the Netherlands
+        founded by two guys with one shared belief. AI is not something to be afraid of.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── THE NAME ──────────────────────────────────────────────── -->
+  <section class="pf-section" aria-labelledby="name-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">The Name</p>
+      <h2 class="pf-section-headline" id="name-headline">
+        Easy<em>B</em>ram & <em>Y</em>ouri.
+      </h2>
+      <div class="pf-prose">
+        <p>
+          EasyBY is not a marketing name. It is just us. Bram and Youri,
+          who decided to build something they actually believed in.
+        </p>
+        <p class="pf-prose-highlight">
+          EasyBY V.O.F. is the small Dutch holding company behind Promptfull.
+          Nothing more, nothing less. The product is what matters.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHY ───────────────────────────────────────────────────── -->
+  <section class="pf-section pf-section--alt" aria-labelledby="why-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">Why We Built This</p>
+      <h2 class="pf-section-headline" id="why-headline">
+        AI felt like a threat. We think that is a knowledge problem.
+      </h2>
+      <div class="pf-prose">
+        <p>
+          We kept seeing the same thing happen around us. People hearing about AI
+          and immediately feeling anxious, like it was coming for their jobs,
+          their creativity, their relevance.
+        </p>
+        <p class="pf-prose-highlight">
+          That reaction is understandable. But we believe it mostly comes from
+          not knowing what AI actually is or how it works.
+        </p>
+        <p>
+          So we built Promptfull to close that gap. Not with lengthy courses or
+          technical documentation, but with bite-sized cards, daily challenges, and
+          practical prompts that make AI feel approachable. Something you can
+          pick up in two minutes and actually use today.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── BELIEF ────────────────────────────────────────────────── -->
+  <section class="pf-section" aria-labelledby="belief-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">What We Believe</p>
+      <h2 class="pf-section-headline" id="belief-headline">
+        AI is a tool. Tools become useful when you understand them.
+      </h2>
+      <div class="pf-prose">
+        <p class="pf-prose-highlight">
+          That is what Promptfull is for. Not to make you an AI expert overnight,
+          but to give you enough understanding to stop feeling left behind
+          and start feeling in control.
+        </p>
+        <p>
+          Independent, intentional, and built for the long term
+          by two people from the Netherlands who genuinely think this matters.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── LEGAL ─────────────────────────────────────────────────── -->
+  <section class="pf-section pf-section--legal" aria-labelledby="legal-headline">
+    <div class="pf-container pf-container--text">
+      <p class="pf-eyebrow">Legal Details</p>
+      <h2 class="pf-section-headline pf-section-headline--sm" id="legal-headline">
+        The official bit.
+      </h2>
+      <div class="pf-legal-card">
+        <div class="pf-legal-row">
+          <span class="pf-legal-label">Company</span>
+          <span class="pf-legal-value">EasyBY V.O.F.</span>
+        </div>
+        <div class="pf-legal-row">
+          <span class="pf-legal-label">Location</span>
+          <span class="pf-legal-value">The Netherlands</span>
+        </div>
+        <div class="pf-legal-row">
+          <span class="pf-legal-label">Product</span>
+          <span class="pf-legal-value">Promptfull</span>
+        </div>
+        <div class="pf-legal-row">
+          <span class="pf-legal-label">Questions</span>
+          <span class="pf-legal-value">
+            <a href="/contact">Get in touch</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</PageTemplate>
+
+<style>
+  /* ─── LOCAL TOKENS ───────────────────────────────────────────── */
+  :root {
+    --pf-about-border:  rgba(0, 0, 0, 0.07);
+    --pf-about-muted:   rgba(60, 60, 67, 0.6);
+    --pf-blue:          #007AFF;
+    --pf-blue-light:    rgba(0, 122, 255, 0.08);
+    --pf-blue-mid:      rgba(0, 122, 255, 0.14);
+  }
+
+  /* ─── LAYOUT ─────────────────────────────────────────────────── */
+  .pf-container {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .pf-container--narrow { max-width: 860px; }
+  .pf-container--text   { max-width: 860px; }
+
+  /* ─── EYEBROW ────────────────────────────────────────────────── */
+  .pf-eyebrow {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--pf-about-muted);
+    margin-bottom: 16px;
+  }
+
+  /* ─── HERO ───────────────────────────────────────────────────── */
+  .pf-hero {
+    padding: 96px 24px 80px;
+    text-align: center;
+    background: #F5F5F7;
+  }
+
+  .pf-hero .pf-eyebrow {
+    margin-bottom: 24px;
+    color: var(--pf-blue);
+  }
+
+  .pf-hero-headline {
+    font-size: clamp(48px, 8vw, 80px);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    margin-bottom: 24px;
+  }
+
+  .pf-hero-headline em {
+    font-style: normal;
+    color: var(--pf-blue);
+  }
+
+  .pf-hero-sub {
+    font-size: clamp(16px, 2vw, 19px);
+    line-height: 1.65;
+    color: var(--text-secondary);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* ─── SECTIONS ───────────────────────────────────────────────── */
+  .pf-section {
+    padding: 80px 24px;
+    border-bottom: 1px solid var(--pf-about-border);
+    background: #F5F5F7;
+  }
+
+  .pf-section--alt {
+    background: #2b3057;
+  }
+
+  .pf-section--alt .pf-eyebrow {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .pf-section--alt .pf-section-headline {
+    color: #ffffff;
+  }
+
+  .pf-section--alt .pf-prose p {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .pf-section--alt .pf-prose-highlight {
+    border-left-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.07);
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+
+  .pf-section--legal {
+    border-bottom: none;
+    padding-bottom: 96px;
+  }
+
+  /* ─── EYEBROW WITH DOT ───────────────────────────────────────── */
+  .pf-section .pf-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pf-section .pf-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--pf-blue);
+    flex-shrink: 0;
+  }
+
+  /* ─── HEADLINES ──────────────────────────────────────────────── */
+  .pf-section-headline {
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--text);
+    margin-bottom: 28px;
+  }
+
+  .pf-section-headline em {
+    font-style: normal;
+    color: var(--pf-blue);
+  }
+
+  .pf-section-headline--sm {
+    font-size: clamp(22px, 3vw, 32px);
+  }
+
+  /* ─── PROSE ──────────────────────────────────────────────────── */
+  .pf-prose {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pf-prose p {
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+
+  .pf-prose strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .pf-prose-highlight {
+    border-left: 3px solid var(--pf-blue);
+    padding: 12px 16px;
+    color: var(--text) !important;
+    background: var(--pf-blue-light);
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* ─── LEGAL CARD ─────────────────────────────────────────────── */
+  .pf-legal-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--pf-about-border);
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 480px;
+  }
+
+  .pf-legal-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--pf-about-border);
+    gap: 16px;
+  }
+
+  .pf-legal-row:last-child {
+    border-bottom: none;
+  }
+
+  .pf-legal-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--pf-about-muted);
+    flex-shrink: 0;
+  }
+
+  .pf-legal-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    text-align: right;
+  }
+
+  .pf-legal-value a {
+    color: var(--pf-blue);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0, 122, 255, 0.3);
+    padding-bottom: 1px;
+    transition: border-color 0.2s ease;
+  }
+
+  .pf-legal-value a:hover {
+    border-bottom-color: var(--pf-blue);
+  }
+
+  /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .pf-hero {
+      padding: 64px 20px 48px;
+    }
+
+    .pf-section {
+      padding: 56px 20px;
+    }
+
+    .pf-section--legal {
+      padding-bottom: 72px;
+    }
+
+    .pf-legal-card {
+      max-width: 100%;
+    }
+  }
+</style>
