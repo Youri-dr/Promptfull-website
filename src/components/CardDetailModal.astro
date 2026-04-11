@@ -19,7 +19,6 @@ interface Props {
 
 const { card } = Astro.props;
 
-// Color for category pill
 const hexRaw = (card.categoryColorHex || "#7C5CFF").replace("#", "");
 const hex = hexRaw.length === 6 ? hexRaw : "7C5CFF";
 const r = parseInt(hex.slice(0, 2), 16);
@@ -27,11 +26,8 @@ const g = parseInt(hex.slice(2, 4), 16);
 const b = parseInt(hex.slice(4, 6), 16);
 const pillStyle = `--pill-r:${r};--pill-g:${g};--pill-b:${b};`;
 
-// Format likes for display
 function formatLikes(likes: number): string {
-  if (likes >= 10000) {
-    return `${Math.floor(likes / 1000)}k`;
-  }
+  if (likes >= 10000) return `${Math.floor(likes / 1000)}k`;
   if (likes >= 1000) {
     const formatted = (likes / 1000).toFixed(1);
     return formatted.endsWith('.0') ? `${Math.floor(likes / 1000)}k` : `${formatted}k`;
@@ -41,33 +37,49 @@ function formatLikes(likes: number): string {
 
 const formattedLikes = formatLikes(card.likes);
 
-// Truncation
 const MAX_CHARS = 280;
 const isTruncated = card.examplePrompt && card.examplePrompt.length > MAX_CHARS;
 const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '...' : card.examplePrompt;
 ---
 
 <div class="card-modal" data-card-id={card.id}>
-  <!-- Blurred background overlay -->
-  <div class="modal-backdrop"></div>
 
-  <!-- Card detail container -->
+  <!-- Fake painted backdrop — mimics a blurred version of the site -->
+  <div class="modal-backdrop" aria-hidden="true">
+    <!-- Fake nav -->
+    <div class="fake-nav">
+      <div class="fake-logo"></div>
+      <div class="fake-nav-links">
+        <div class="fake-pill"></div>
+        <div class="fake-pill"></div>
+        <div class="fake-pill"></div>
+        <div class="fake-pill accent"></div>
+      </div>
+    </div>
+    <!-- Fake card row -->
+    <div class="fake-cards">
+      <div class="fake-card" style="height:360px; margin-top:0px;"></div>
+      <div class="fake-card" style="height:300px; margin-top:32px;"></div>
+      <div class="fake-card" style="height:340px; margin-top:12px;"></div>
+      <div class="fake-card" style="height:280px; margin-top:48px;"></div>
+      <div class="fake-card" style="height:360px; margin-top:0px;"></div>
+    </div>
+  </div>
+
+  <!-- Modal card -->
   <div class="modal-container">
     <div class="modal-card">
-      <!-- Close button -->
       <button class="close-button" aria-label="Close">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </button>
 
-      <!-- Header -->
       <header class="card-header">
         <div class="header-top">
           <span class="category-pill" style={pillStyle}>
             {card.category.toUpperCase()}
           </span>
-          
           <span class="likes-badge">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
@@ -75,12 +87,10 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
             <span class="likes-count">{formattedLikes}</span>
           </span>
         </div>
-        
         <h1 class="card-title">{card.title}</h1>
         <p class="card-subtitle">{card.subtitle}</p>
       </header>
 
-      <!-- Description section -->
       {card.fullDescription && (
         <section class="detail-section">
           <h2 class="section-title">Description</h2>
@@ -91,7 +101,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
         </section>
       )}
 
-      <!-- Example prompt section -->
       {card.examplePrompt && (
         <section class="detail-section">
           <div class="prompt-copy-card" data-prompt={card.examplePrompt}>
@@ -104,11 +113,8 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
                 </svg>
               </button>
             </div>
-
             <div class="prompt-content">
-              <!-- FIX: renamed variable to promptTextEl to avoid conflict with JS scope -->
               <pre class="prompt-text" data-full-text={card.examplePrompt}>{truncatedPrompt}</pre>
-              
               {isTruncated && (
                 <button class="read-more-button" aria-label="Show full prompt">
                   <span class="read-more-text">Read more</span>
@@ -118,8 +124,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
                 </button>
               )}
             </div>
-
-            <!-- Copied feedback overlay -->
             <div class="copied-overlay" aria-live="polite">
               <div class="glow-ring"></div>
               <div class="checkmark-circle">
@@ -132,7 +136,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
         </section>
       )}
 
-      <!-- Usage tips section -->
       {card.usageTips && card.usageTips.length > 0 && (
         <section class="detail-section">
           <h2 class="section-title">Usage Tips</h2>
@@ -144,7 +147,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
         </section>
       )}
 
-      <!-- Action buttons -->
       <div class="card-actions">
         <button class="action-button like-button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -152,7 +154,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
           </svg>
           <span>Like This Card</span>
         </button>
-
         <button class="action-button share-button">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -163,20 +164,15 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     </div>
   </div>
 
-  <!-- Toast notification -->
   <div class="toast" role="alert" aria-live="polite">
     <span class="toast-text"></span>
   </div>
 </div>
 
 <style>
-  /* Modal backdrop */
   .card-modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -184,16 +180,78 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     padding: 20px;
   }
 
+  /* ── Fake painted backdrop ─────────────────────────────────────── */
   .modal-backdrop {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    inset: 0;
+    background: #EBEBED;
+    overflow: hidden;
     animation: fadeIn 0.3s ease;
+  }
+
+  /* Gaussian blur over the whole backdrop */
+  .modal-backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(0px);
+    background: rgba(0, 0, 0, 0.28);
+  }
+
+  /* Fake nav bar */
+  .fake-nav {
+    height: 48px;
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px;
+    filter: blur(3px);
+  }
+
+  .fake-logo {
+    width: 110px;
+    height: 16px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+  }
+
+  .fake-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .fake-pill {
+    width: 60px;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 999px;
+    filter: blur(1px);
+  }
+
+  .fake-pill.accent {
+    background: rgba(0, 122, 255, 0.35);
+    width: 44px;
+  }
+
+  /* Fake card row */
+  .fake-cards {
+    display: flex;
+    gap: 16px;
+    padding: 32px 48px;
+    align-items: flex-start;
+    filter: blur(4px);
+  }
+
+  .fake-card {
+    flex: 1;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.06),
+      0 8px 24px rgba(0, 0, 0, 0.09);
   }
 
   @keyframes fadeIn {
@@ -201,7 +259,7 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     to { opacity: 1; }
   }
 
-  /* Modal container */
+  /* ── Modal container ───────────────────────────────────────────── */
   .modal-container {
     position: relative;
     width: 100%;
@@ -216,14 +274,11 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     to { opacity: 1; transform: scale(1); }
   }
 
-  /* Card */
   .modal-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: saturate(180%) blur(20px);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    background: rgba(255, 255, 255, 0.97);
     border-radius: 28px;
-    box-shadow: 
-      0 8px 32px rgba(0, 0, 0, 0.12),
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.14),
       0 2px 8px rgba(0, 0, 0, 0.08);
     border: 0.5px solid rgba(0, 0, 0, 0.06);
     padding: 32px;
@@ -232,13 +287,11 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     position: relative;
   }
 
-  /* Custom scrollbar */
   .modal-card::-webkit-scrollbar { width: 8px; }
   .modal-card::-webkit-scrollbar-track { background: transparent; margin: 20px 0; }
   .modal-card::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 4px; }
   .modal-card::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.25); }
 
-  /* Close button */
   .close-button {
     position: absolute;
     top: 24px;
@@ -260,7 +313,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
   .close-button:hover { background: rgba(0, 0, 0, 0.1); transform: scale(1.05); }
   .close-button:active { transform: scale(0.95); }
 
-  /* Header */
   .card-header { margin-bottom: 32px; }
 
   .header-top {
@@ -313,7 +365,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     margin: 0;
   }
 
-  /* Sections */
   .detail-section {
     margin-bottom: 28px;
     padding-bottom: 28px;
@@ -340,7 +391,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
   .section-text:last-child { margin-bottom: 0; }
   .section-text.secondary { color: var(--text-secondary); font-size: 16px; }
 
-  /* Prompt copy card */
   .prompt-copy-card {
     position: relative;
     padding: 20px;
@@ -360,7 +410,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
   .prompt-title {
     font-size: 15px;
     font-weight: 600;
-    letter-spacing: -0.01em;
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
   }
@@ -418,20 +467,12 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
   .read-more-button:hover { background: rgba(255, 255, 255, 0.12); color: rgba(255, 255, 255, 0.9); }
   .read-more-button:active { transform: scale(0.98); }
 
-  .read-more-icon {
-    transition: transform 0.3s ease;
-    color: rgba(255, 255, 255, 0.6);
-  }
-
+  .read-more-icon { transition: transform 0.3s ease; color: rgba(255, 255, 255, 0.6); }
   .read-more-button.expanded .read-more-icon { transform: rotate(180deg); }
 
-  /* Copied feedback overlay */
   .copied-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -491,7 +532,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     100% { transform: scale(1); opacity: 1; }
   }
 
-  /* Tips list */
   .tips-list {
     margin: 0;
     padding-left: 20px;
@@ -506,7 +546,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     color: var(--text-secondary);
   }
 
-  /* Action buttons */
   .card-actions {
     display: flex;
     flex-direction: column;
@@ -540,7 +579,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
 
   .action-button:active { transform: translateY(0); }
 
-  /* Toast notification */
   .toast {
     position: fixed;
     bottom: -100px;
@@ -559,7 +597,6 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
 
   .toast.show { bottom: 32px; }
 
-  /* Mobile adjustments */
   @media (max-width: 820px) {
     .modal-card { padding: 24px; border-radius: 24px; }
     .close-button { top: 16px; right: 16px; }
@@ -570,6 +607,7 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     .section-text { font-size: 16px; }
     .prompt-copy-card { padding: 16px; }
     .prompt-text { font-size: 14px; padding: 12px; }
+    .fake-cards { display: none; }
   }
 
   @media (max-width: 520px) {
@@ -591,30 +629,21 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
     const copyButton = promptCard?.querySelector('.copy-button');
     const overlay = promptCard?.querySelector('.copied-overlay');
     const readMoreButton = promptCard?.querySelector('.read-more-button');
-    // FIX: renamed to promptTextEl to avoid conflict with copy handler variable
     const promptTextEl = promptCard?.querySelector('.prompt-text') as HTMLElement | null;
     const actionButtons = modal.querySelectorAll('.action-button');
     const toast = modal.querySelector('.toast');
     const toastText = toast?.querySelector('.toast-text');
 
-    // Lock scroll when modal opens
-    const scrollY = window.scrollY;
-    document.body.style.overflow = 'hidden';
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-    document.body.style.left = '0';
-    document.body.style.right = '0';
+    // Lock scroll
+    document.documentElement.style.overflow = 'hidden';
 
-    // Close modal
     const closeModal = () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      window.scrollTo(0, scrollY);
+      document.documentElement.style.overflow = '';
+      const savedScroll = sessionStorage.getItem('pf_scroll_restore');
+      if (savedScroll !== null) {
+        sessionStorage.setItem('pf_scroll_pending', savedScroll);
+        sessionStorage.removeItem('pf_scroll_restore');
+      }
       window.history.back();
     };
 
@@ -624,55 +653,39 @@ const truncatedPrompt = isTruncated ? card.examplePrompt.slice(0, MAX_CHARS) + '
       if (e.key === 'Escape') closeModal();
     });
 
-    // Copy full prompt — uses data-prompt on the card, never the truncated display text
     copyButton?.addEventListener('click', async () => {
       const fullPrompt = promptCard?.getAttribute('data-prompt');
       if (!fullPrompt || !overlay) return;
-
       try {
         await navigator.clipboard.writeText(fullPrompt);
         overlay.classList.add('show');
-        setTimeout(() => {
-          overlay.classList.remove('show');
-        }, 1200);
+        setTimeout(() => overlay.classList.remove('show'), 1200);
       } catch (err) {
         console.error('Failed to copy:', err);
       }
     });
 
-    // Read more / Read less toggle
-    // FIX: uses promptTextEl (not promptText) to avoid variable name conflict
-    // FIX: "Read less" text was previously set to just "Read" — now correct
     readMoreButton?.addEventListener('click', () => {
       if (!promptTextEl || !readMoreButton) return;
-
       const isExpanded = readMoreButton.classList.contains('expanded');
       const fullText = promptTextEl.getAttribute('data-full-text') || '';
-      const truncatedText = fullText.slice(0, 280) + '...';
       const readMoreText = readMoreButton.querySelector('.read-more-text');
-
       if (isExpanded) {
-        // Collapse
-        promptTextEl.textContent = truncatedText;
+        promptTextEl.textContent = fullText.slice(0, 280) + '...';
         readMoreButton.classList.remove('expanded');
         if (readMoreText) readMoreText.textContent = 'Read more';
       } else {
-        // Expand
         promptTextEl.textContent = fullText;
         readMoreButton.classList.add('expanded');
-        // FIX: was 'Read' — now correctly 'Read less'
         if (readMoreText) readMoreText.textContent = 'Read less';
       }
     });
 
-    // Show toast for like/share
     const showToast = (message: string) => {
       if (!toast || !toastText) return;
       toastText.textContent = message;
       toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
+      setTimeout(() => toast.classList.remove('show'), 3000);
     };
 
     actionButtons?.forEach((button) => {

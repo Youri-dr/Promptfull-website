@@ -45,7 +45,6 @@ function formatLikes(likes: number): string {
 <section class="pf-carousel" aria-label="AI Cards">
   <div class="pf-rail-wrap">
 
-    <!-- Arrows inside the wrapper but visually outside via negative position -->
     <button class="pf-arrow pf-arrow-prev" aria-label="Scroll left" disabled>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -100,7 +99,6 @@ function formatLikes(likes: number): string {
         );
       })}
 
-      {/* Locked card */}
       {showLockedCard && (
         <a href={appUrl} class="pf-ai-card locked-card" target="_blank" rel="noopener">
           <div class="locked-overlay">
@@ -118,7 +116,6 @@ function formatLikes(likes: number): string {
       )}
     </div>
 
-    <!-- Scroll hint overlay -->
     <div class="pf-scroll-hint" aria-hidden="true">
       <div class="pf-scroll-hint-content">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -131,23 +128,20 @@ function formatLikes(likes: number): string {
 </section>
 
 <style>
-  .pf-carousel { 
+  .pf-carousel {
     margin-top: 32px;
   }
 
-  /* overflow: visible so the arrows can poke outside the box */
-  .pf-rail-wrap { 
+  .pf-rail-wrap {
     position: relative;
     overflow: visible;
   }
 
-  /* Clip only the rail itself, not the whole wrapper */
   .pf-rail {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 340px;
     gap: 16px;
-
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
@@ -155,81 +149,52 @@ function formatLikes(likes: number): string {
     padding: 8px 0 24px;
     padding-left: calc(50% - 170px - 176px);
     padding-right: 20px;
-
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
 
-  .pf-rail::-webkit-scrollbar {
-    display: none;
-  }
+  .pf-rail::-webkit-scrollbar { display: none; }
 
-  /* ── Arrow buttons: absolute, pushed outside with negative values ── */
   .pf-arrow {
     position: absolute;
     top: 50%;
-    /* nudge up to visually center on the cards, above the scrollbar padding */
     transform: translateY(calc(-50% - 12px));
     z-index: 10;
-
     width: 40px;
     height: 40px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
-
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.10),
-      0 1px 2px rgba(0, 0, 0, 0.06);
-
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10), 0 1px 2px rgba(0, 0, 0, 0.06);
     display: flex;
     align-items: center;
     justify-content: center;
     color: rgba(0, 0, 0, 0.75);
-
-    transition: 
-      background 0.15s ease,
-      box-shadow 0.15s ease,
-      transform 0.15s ease,
-      opacity 0.2s ease;
+    transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease, opacity 0.2s ease;
   }
 
   .pf-arrow:hover {
     background: #fff;
-    box-shadow:
-      0 4px 16px rgba(0, 0, 0, 0.14),
-      0 1px 4px rgba(0, 0, 0, 0.08);
-    /* keep the vertical translate, add scale */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14), 0 1px 4px rgba(0, 0, 0, 0.08);
     transform: translateY(calc(-50% - 12px)) scale(1.06);
     color: rgba(0, 0, 0, 0.9);
   }
 
-  .pf-arrow:active {
-    transform: translateY(calc(-50% - 12px)) scale(0.96);
-  }
-
-  .pf-arrow:disabled {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  /* Negative values push them outside the wrapper edge */
+  .pf-arrow:active { transform: translateY(calc(-50% - 12px)) scale(0.96); }
+  .pf-arrow:disabled { opacity: 0; pointer-events: none; }
   .pf-arrow-prev { left: -52px; }
   .pf-arrow-next { right: -52px; }
 
-  /* AI Card */
   .pf-ai-card {
     scroll-snap-align: start;
     border-radius: 24px;
     background: rgba(255, 255, 255, 0.72);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
-    box-shadow: 
-      0 2px 8px rgba(0, 0, 0, 0.04),
-      0 8px 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.08);
     border: 0.5px solid rgba(0, 0, 0, 0.04);
     padding: 20px;
     display: flex;
@@ -244,20 +209,12 @@ function formatLikes(likes: number): string {
 
   .pf-ai-card:hover {
     transform: translateY(-2px);
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.06),
-      0 12px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.12);
   }
 
-  .pf-ai-card:active {
-    transform: translateY(0);
-  }
+  .pf-ai-card:active { transform: translateY(0); }
 
-  .pf-ai-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .pf-ai-top { display: flex; align-items: center; gap: 12px; }
 
   .pf-pill {
     font-size: 11px;
@@ -280,14 +237,8 @@ function formatLikes(likes: number): string {
     color: rgba(60, 60, 67, 0.6);
   }
 
-  .pf-like svg {
-    color: rgba(60, 60, 67, 0.4);
-    flex-shrink: 0;
-  }
-
-  .pf-like-count {
-    font-variant-numeric: tabular-nums;
-  }
+  .pf-like svg { color: rgba(60, 60, 67, 0.4); flex-shrink: 0; }
+  .pf-like-count { font-variant-numeric: tabular-nums; }
 
   .pf-hero {
     height: 200px;
@@ -298,9 +249,7 @@ function formatLikes(likes: number): string {
     );
     display: grid;
     place-items: center;
-    box-shadow: 
-      0 2px 8px rgba(0, 0, 0, 0.08),
-      0 4px 16px rgba(var(--cat-r), var(--cat-g), var(--cat-b), 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(var(--cat-r), var(--cat-g), var(--cat-b), 0.2);
   }
 
   .pf-hero-center {
@@ -319,24 +268,10 @@ function formatLikes(likes: number): string {
     line-height: 1;
   }
 
-  .pf-hero-icon :global(.pf-hero-svg) {
-    width: 48px;
-    height: 48px;
-    stroke: white;
-    color: white;
-  }
+  .pf-hero-icon :global(.pf-hero-svg) { width: 48px; height: 48px; stroke: white; color: white; }
+  .pf-hero-cat { font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: rgba(255, 255, 255, 0.9); }
 
-  .pf-hero-cat {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .pf-ai-text {
-    display: grid;
-    gap: 8px;
-  }
+  .pf-ai-text { display: grid; gap: 8px; }
 
   .pf-ai-title {
     margin: 0;
@@ -363,17 +298,10 @@ function formatLikes(likes: number): string {
   }
 
   .pf-ai-card:focus-visible {
-    box-shadow: 
-      0 4px 12px rgba(0, 0, 0, 0.08),
-      0 0 0 4px rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 4px rgba(0, 122, 255, 0.3);
   }
 
-  /* Locked card */
-  .locked-card {
-    position: relative;
-    overflow: hidden;
-    text-decoration: none;
-  }
+  .locked-card { position: relative; overflow: hidden; text-decoration: none; }
 
   .locked-card::before {
     content: '';
@@ -384,19 +312,8 @@ function formatLikes(likes: number): string {
     -webkit-backdrop-filter: blur(8px);
   }
 
-  .locked-overlay {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-
-  .lock-content {
-    text-align: center;
-    padding: 32px;
-  }
+  .locked-overlay { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; height: 100%; }
+  .lock-content { text-align: center; padding: 32px; }
 
   .lock-icon {
     color: rgba(0, 0, 0, 0.3);
@@ -409,21 +326,8 @@ function formatLikes(likes: number): string {
     50% { transform: translateY(-8px); }
   }
 
-  .lock-title {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    color: rgba(0, 0, 0, 0.88);
-    margin: 0 0 12px 0;
-  }
-
-  .lock-subtitle {
-    font-size: 17px;
-    line-height: 1.4;
-    color: rgba(60, 60, 67, 0.75);
-    margin: 0 0 24px 0;
-  }
+  .lock-title { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: rgba(0, 0, 0, 0.88); margin: 0 0 12px 0; }
+  .lock-subtitle { font-size: 17px; line-height: 1.4; color: rgba(60, 60, 67, 0.75); margin: 0 0 24px 0; }
 
   .lock-cta {
     display: inline-flex;
@@ -438,12 +342,8 @@ function formatLikes(likes: number): string {
     transition: all 0.2s ease;
   }
 
-  .locked-card:hover .lock-cta {
-    background: rgba(0, 122, 255, 0.15);
-    transform: translateX(2px);
-  }
+  .locked-card:hover .lock-cta { background: rgba(0, 122, 255, 0.15); transform: translateX(2px); }
 
-  /* Scroll hint — clips to the rail area only */
   .pf-scroll-hint {
     position: absolute;
     inset: 0;
@@ -460,9 +360,7 @@ function formatLikes(likes: number): string {
     border-radius: 12px;
   }
 
-  .pf-scroll-hint.hidden {
-    opacity: 0;
-  }
+  .pf-scroll-hint.hidden { opacity: 0; }
 
   .pf-scroll-hint-content {
     display: flex;
@@ -476,9 +374,7 @@ function formatLikes(likes: number): string {
     animation: pulse 2.5s ease-in-out infinite;
   }
 
-  .pf-scroll-hint-content svg {
-    animation: slideRight 2s ease-in-out infinite;
-  }
+  .pf-scroll-hint-content svg { animation: slideRight 2s ease-in-out infinite; }
 
   @keyframes pulse {
     0%, 100% { opacity: 1; }
@@ -490,19 +386,15 @@ function formatLikes(likes: number): string {
     50% { transform: translateX(6px); }
   }
 
-  /* Mobile — hide arrows, touch is enough */
   @media (max-width: 520px) {
     .pf-carousel { margin-top: 28px; }
-
     .pf-rail {
       grid-auto-columns: 82vw;
       gap: 12px;
       padding-left: calc(50% - 41vw - 47vw);
       padding-right: 16px;
     }
-
     .pf-arrow { display: none; }
-
     .pf-ai-card { height: 400px; }
     .pf-ai-title { font-size: 19px; }
     .pf-ai-sub { font-size: 14px; }
@@ -524,7 +416,6 @@ function formatLikes(likes: number): string {
 
       if (!rail) return;
 
-      // ── Scroll hint ──
       if (hint) {
         const hideHint = () => hint.classList.add('hidden');
         rail.addEventListener('scroll',     hideHint, { once: true });
@@ -533,7 +424,6 @@ function formatLikes(likes: number): string {
         setTimeout(hideHint, 5000);
       }
 
-      // ── Arrow state ──
       function updateArrows() {
         if (!btnPrev || !btnNext) return;
         btnPrev.disabled = rail.scrollLeft <= 0;
@@ -563,13 +453,17 @@ function formatLikes(likes: number): string {
       updateArrows();
     });
 
-    // ── Card click handlers ──
+    // ── Card click: save scroll position before navigating ──
     const cards = document.querySelectorAll('.pf-ai-card:not(.locked-card)');
     cards.forEach((card) => {
       const htmlCard = card as HTMLElement;
       htmlCard.addEventListener('click', () => {
         const cardId = htmlCard.getAttribute('data-ai-id');
-        if (cardId) window.location.href = `/cards/${cardId}`;
+        if (cardId) {
+          // Store current scroll position so the modal page can restore it on close
+          sessionStorage.setItem('pf_scroll_restore', String(window.scrollY));
+          window.location.href = `/cards/${cardId}`;
+        }
       });
       htmlCard.style.cursor = 'pointer';
     });

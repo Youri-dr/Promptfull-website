@@ -6,16 +6,15 @@ import { getAllAICards, getAICardBySlug } from "../../lib/directus";
 // Generate static paths for all cards
 export async function getStaticPaths() {
   const cards = await getAllAICards();
-  
   return cards.map((card) => ({
-    params: { slug: card.slug }, // ✅ Use slug instead of id
+    params: { slug: card.slug },
   }));
 }
 
 const { slug } = Astro.params;
 
 // Fetch full card details
-const cardData = await getAICardBySlug(slug); // ✅ Use slug
+const cardData = await getAICardBySlug(slug);
 
 if (!cardData) {
   return Astro.redirect('/404');
@@ -36,7 +35,7 @@ if (cardData.usage_tips) {
 
 // Transform card for component
 const card = {
-  id: cardData.slug, // ✅ Use slug as ID
+  id: cardData.slug,
   category: cardData.category.name,
   categoryColorHex: cardData.category.color_hex,
   heroSymbol: cardData.hero_symbol,
